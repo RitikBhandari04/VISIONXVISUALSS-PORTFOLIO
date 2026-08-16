@@ -179,81 +179,109 @@ section{ position:relative; }
   transition:width .35s var(--ease);
 }
 #nav nav a:hover::after{ width:100%; }
-#nav .menu-btn{ display:none; font-family:var(--f-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
-@media (max-width:760px){
-  #nav nav{ display:none; }
-  #nav .menu-btn{ display:block; }
-}
 
-
-/* ============================================================
-   MOBILE MENU — REAL BACKDROP BLUR
-   The backdrop is a separate fixed layer behind the menu.
-   This makes the content/video behind WORK, ABOUT, SERVICES
-   and CONTACT visibly blurred on mobile.
-   ============================================================ */
-
-#mobileMenuBackdrop{
-  position:fixed;
-  inset:0;
-  z-index:490;
-  display:none;
-  background:rgba(8,8,10,.28);
-  backdrop-filter:blur(22px) saturate(.72);
-  -webkit-backdrop-filter:blur(22px) saturate(.72);
-  pointer-events:auto;
-}
-
-#mobileMenuBackdrop.active{
-  display:block;
-}
-
-@media (max-width:760px){
-
-  #nav.mobile-open{
-    z-index:700;
+/* ============================= MOBILE / TABLET MENU ============================= */
+/* The menu becomes a full-screen glass layer on touch/mobile/tablet devices. */
+@media (max-width:1024px){
+  #nav.menu-is-open{
     mix-blend-mode:normal;
+    z-index:700;
   }
 
-  #nav.mobile-open nav{
+  #nav.menu-is-open .menu-btn{
+    position:relative;
+    z-index:705;
+  }
+
+  #nav nav.mobile-menu-open{
     display:flex !important;
     position:fixed;
     inset:0;
     width:100%;
     height:100svh;
-    z-index:701;
-
+    margin:0;
+    padding:100px 28px 40px;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     gap:28px;
-
-    background:transparent;
+    background:rgba(8,8,10,.46);
+    backdrop-filter:blur(18px) saturate(.85);
+    -webkit-backdrop-filter:blur(18px) saturate(.85);
+    z-index:700;
     mix-blend-mode:normal;
+    overflow-y:auto;
   }
 
-  #nav.mobile-open nav a{
+  #nav nav.mobile-menu-open::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:rgba(8,8,10,.20);
+    pointer-events:none;
+    z-index:-1;
+  }
+
+  #nav nav.mobile-menu-open a{
     position:relative;
-    z-index:702;
-    font-size:20px !important;
+    z-index:2;
+    font-family:var(--f-display);
+    font-size:clamp(38px,8vw,64px) !important;
+    line-height:.9;
+    letter-spacing:.02em;
     color:var(--text);
+    transition:color .25s ease, transform .25s ease;
   }
 
-  #nav.mobile-open nav a::after{
+  #nav nav.mobile-menu-open a:hover{
+    color:var(--accent);
+    transform:translateY(-2px);
+  }
+
+  #nav nav.mobile-menu-open a::after{
+    display:none;
+  }
+
+  /* Dedicated close button inside the opened menu */
+  #nav nav.mobile-menu-open .mobile-menu-close{
+    display:flex;
+    position:absolute;
+    top:22px;
+    right:20px;
+    width:48px;
+    height:48px;
+    align-items:center;
+    justify-content:center;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:50%;
+    background:rgba(8,8,10,.42);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    color:var(--text);
+    font-family:var(--f-mono);
+    font-size:22px;
+    line-height:1;
+    z-index:710;
+    cursor:pointer;
+    transition:background .25s ease, border-color .25s ease, color .25s ease, transform .25s ease;
+  }
+
+  #nav nav.mobile-menu-open .mobile-menu-close:hover{
     background:var(--accent);
-  }
-
-  #nav.mobile-open .menu-btn{
-    position:relative;
-    z-index:703;
+    border-color:var(--accent);
+    color:#08080a;
+    transform:rotate(90deg);
   }
 }
 
-/* Extra fallback for browsers where backdrop-filter is disabled */
-@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
-  #mobileMenuBackdrop.active{
-    background:rgba(8,8,10,.82);
-  }
+/* Keep the close control out of desktop navigation. */
+.mobile-menu-close{
+  display:none;
+}
+#nav .menu-btn{ display:none; font-family:var(--f-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
+@media (max-width:1024px){
+  #nav nav{ display:none; }
+  #nav .menu-btn{ display:block; }
 }
 
 /* ============================= HERO ============================= */
@@ -692,10 +720,127 @@ section{ position:relative; }
 .ba-wrap .knob svg{ width:12px; height:12px; }
 .ba-wrap .lbl{ position:absolute; top:22px; font-family:var(--f-mono); font-size:11px; letter-spacing:.14em; color:#fff; text-shadow:0 2px 10px rgba(0,0,0,.6); }
 .ba-wrap .lbl.l{ left:22px; } .ba-wrap .lbl.r{ right:22px; }
-.pipeline{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:0; margin-top:64px; }
-.pipeline .step{ font-family:var(--f-mono); font-size:12px; letter-spacing:.14em; color:var(--text-faint); padding:10px 22px; border:1px solid var(--line); border-radius:999px; transition:all .4s var(--ease); }
-.pipeline .step.on{ color:var(--bg); background:var(--accent); border-color:var(--accent); }
-.pipeline .arrow{ color:var(--text-faint); padding:0 14px; font-size:12px; }
+.pipeline{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  margin-top:64px;
+}
+
+.pipeline .step{
+  font-family:var(--f-mono);
+  font-size:12px;
+  letter-spacing:.14em;
+  color:var(--text-faint);
+  padding:10px 22px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  transition:all .4s var(--ease);
+}
+
+.pipeline .step.on{
+  color:inherit;
+  background:rgba(255,255,255,.015);
+  border-color:var(--line);
+}
+
+.pipeline .arrow{
+  color:var(--text-faint);
+  padding:0 14px;
+  font-size:12px;
+}
+
+/* ============================= RESPONSIVE PROCESS PIPELINE ============================= */
+/* Give the process stages comfortable spacing on tablets and phones. */
+@media (max-width:1024px){
+  .pipeline{
+    flex-direction:column;
+    flex-wrap:nowrap;
+    gap:14px;
+    margin-top:42px;
+    width:100%;
+  }
+
+  .pipeline .step{
+    width:min(100%, 300px);
+    text-align:center;
+    padding:12px 20px;
+  }
+
+  .pipeline .arrow{
+    padding:0;
+    line-height:1;
+    transform:rotate(90deg);
+    margin:2px 0;
+  }
+}
+
+@media (max-width:600px){
+  .pipeline{
+    gap:16px;
+    margin-top:38px;
+  }
+
+  .pipeline .step{
+    width:min(100%, 280px);
+    padding:13px 18px;
+    font-size:11px;
+  }
+
+  .pipeline .arrow{
+    margin:3px 0;
+  }
+}
+
+
+/* ============================= SCROLL-ACTIVATED PIPELINE ============================= */
+/* Each stage fills orange one-by-one as the process section enters the viewport. */
+.pipeline .step{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  color:var(--text-faint);
+  background:rgba(255,255,255,.015);
+  border-color:var(--line);
+  transition:
+    color .45s var(--ease),
+    border-color .45s var(--ease),
+    background-color .45s var(--ease);
+}
+
+.pipeline .step::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:var(--accent);
+  transform:scaleX(0);
+  transform-origin:left center;
+  transition:transform .65s var(--ease);
+  z-index:-1;
+}
+
+.pipeline .step.active{
+  color:var(--bg);
+  border-color:var(--accent);
+  background:var(--accent);
+}
+
+.pipeline .step.active::before{
+  transform:scaleX(1);
+}
+
+@media(max-width:1024px){
+  .pipeline .step::before{
+    transform:scaleY(0);
+    transform-origin:center bottom;
+  }
+
+  .pipeline .step.active::before{
+    transform:scaleY(1);
+  }
+}
 
 /* ============================= MORE WORK ============================= */
 #more{ overflow:hidden; }
@@ -1288,8 +1433,6 @@ html {
   <div class="pct mono" id="pctText">LOADING 000%</div>
 </div>
 
-<div id="mobileMenuBackdrop"></div>
-
 <header id="nav">
   <div class="logo">VISION<b>X</b>VISUALSS</div>
   <nav>
@@ -1298,7 +1441,7 @@ html {
     <a href="#services">SERVICES</a>
     <a href="#contact">CONTACT</a>
   </nav>
-  <button class="menu-btn">MENU</button>
+  <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false">MENU</button>
 </header>
 
 <!-- ============================= HERO ============================= -->
@@ -1956,15 +2099,6 @@ function initHeroReveal(){
   const pipe = $('#pipeline');
   pipe.innerHTML = PHENIX_DATA.process.map((s,i)=>`${i>0?'<span class="arrow">→</span>':''}<span class="step" data-i="${i}">${s}</span>`).join('');
 
-  const steps = $$('.pipeline .step');
-  ScrollTrigger.create({
-    trigger:'#process', start:'top 60%', end:'bottom 60%', scrub:1,
-    onUpdate: self => {
-      const idx = Math.floor(self.progress * steps.length);
-      steps.forEach((st,i)=> st.classList.toggle('on', i<=idx));
-    }
-  });
-
   const wrap = $('#baWrap'), after = $('#baAfter'), handle = $('#baHandle'), knob = $('#baKnob');
   let dragging = false;
   function setPos(clientX){
@@ -1978,6 +2112,83 @@ function initHeroReveal(){
   wrap.addEventListener('pointerdown', e=>{ dragging=true; setPos(e.clientX); });
   window.addEventListener('pointermove', e=>{ if(dragging) setPos(e.clientX); });
   window.addEventListener('pointerup', ()=> dragging=false);
+})();
+
+
+/* =====================================================================
+   PROCESS PIPELINE — SEQUENTIAL SCROLL FILL
+   ===================================================================== */
+(function processPipelineScroll(){
+  const pipeline = $('#pipeline');
+  if(!pipeline) return;
+
+  let ticking = false;
+
+  function updatePipeline(){
+    ticking = false;
+
+    const steps = $$('.pipeline .step', pipeline);
+    if(!steps.length) return;
+
+    const viewportH = window.innerHeight;
+    const rects = steps.map(step => step.getBoundingClientRect());
+
+    if(window.innerWidth <= 1024){
+      /*
+        MOBILE / TABLET:
+        Each block is vertical, so it activates independently when
+        its own top reaches the middle of the screen.
+      */
+      const halfway = viewportH * 0.5;
+
+      steps.forEach((step, i) => {
+        step.classList.toggle('active', rects[i].top <= halfway);
+      });
+
+    }else{
+      /*
+        DESKTOP:
+        The five blocks are in one horizontal row, so their vertical
+        positions are identical and checking each block against 50%
+        would activate them all at once.
+
+        Instead, the pipeline itself moves through a scroll window.
+        Each 20% of that window activates exactly one stage.
+      */
+      const pipelineTop = pipeline.getBoundingClientRect().top;
+
+      const start = viewportH * 0.78;
+      const end = viewportH * 0.18;
+
+      const progress = Math.max(
+        0,
+        Math.min(1, (start - pipelineTop) / (start - end))
+      );
+
+      const activeCount = Math.min(
+        steps.length,
+        Math.floor(progress * steps.length + 0.0001)
+      );
+
+      steps.forEach((step, i) => {
+        step.classList.toggle('active', i < activeCount);
+      });
+    }
+  }
+
+  function requestUpdate(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(updatePipeline);
+  }
+
+  window.addEventListener('scroll', requestUpdate, {passive:true});
+  window.addEventListener('resize', requestUpdate);
+  window.addEventListener('load', requestUpdate);
+
+  requestUpdate();
+  setTimeout(requestUpdate, 300);
+  setTimeout(requestUpdate, 1000);
 })();
 
 /* =====================================================================
@@ -2457,75 +2668,13 @@ $('#dClose').addEventListener('click', closeDetail);
   });
 })();
 
-/* ============================================================
-   MOBILE MENU — OPEN / BLUR / CLOSE
-   ============================================================ */
-
-(function mobileMenu(){
-  const menuBtn = $('.menu-btn');
-  const navBar = $('#nav');
+/* mobile menu toggle (simple) */
+$('.menu-btn').addEventListener('click', ()=>{
   const nav = $('#nav nav');
-  const backdrop = $('#mobileMenuBackdrop');
-
-  if(!menuBtn || !navBar || !nav || !backdrop) return;
-
-  let menuOpen = false;
-
-  function openMenu(){
-    menuOpen = true;
-
-    /* Put the menu above the blur layer */
-    navBar.classList.add('mobile-open');
-    backdrop.classList.add('active');
-
-    /* Lock the page underneath */
-    document.body.style.overflow = 'hidden';
-
-    menuBtn.textContent = 'CLOSE';
-  }
-
-  function closeMenu(){
-    menuOpen = false;
-
-    /* Remove menu and blur completely */
-    navBar.classList.remove('mobile-open');
-    backdrop.classList.remove('active');
-
-    /* Restore scrolling */
-    document.body.style.overflow = '';
-
-    menuBtn.textContent = 'MENU';
-  }
-
-  menuBtn.addEventListener('click', function(e){
-    e.preventDefault();
-    menuOpen ? closeMenu() : openMenu();
-  });
-
-  /* Clicking WORK / ABOUT / SERVICES / CONTACT closes the menu */
-  nav.querySelectorAll('a').forEach(link=>{
-    link.addEventListener('click', function(){
-      closeMenu();
-    });
-  });
-
-  /* Clicking the blurred area also closes the menu */
-  backdrop.addEventListener('click', closeMenu);
-
-  /* Escape closes it */
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape' && menuOpen){
-      closeMenu();
-    }
-  });
-
-  /* Never leave the mobile menu open when switching to desktop */
-  window.addEventListener('resize', function(){
-    if(window.innerWidth > 760 && menuOpen){
-      closeMenu();
-    }
-  });
-})();
+  const open = nav.style.display === 'flex';
+  nav.style.cssText = open ? '' : 'display:flex; position:fixed; inset:0; background:var(--bg); flex-direction:column; align-items:center; justify-content:center; gap:28px; z-index:600; mix-blend-mode:normal;';
+  nav.querySelectorAll('a').forEach(a=> a.style.fontSize = open ? '' : '20px');
+});
 </script>
 </body>
 </html>

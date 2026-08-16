@@ -178,7 +178,21 @@ section{ position:relative; }
 .head-sub{ max-width:340px; color:var(--text-dim); font-size:14px; line-height:1.6; }
 
 /* ============================= SHOWREEL ============================= */
-#showreel .wrap{ max-width:1600px; }
+
+/*
+  Keep the Showreel heading aligned with the video below.
+  The video uses the same left/right spacing, so the heading
+  now starts and ends on exactly the same vertical guides.
+*/
+#showreel > .head-row{
+  margin-left:clamp(20px,5vw,64px);
+  margin-right:clamp(20px,5vw,64px);
+  margin-bottom:56px;
+}
+
+#showreel .wrap{
+  max-width:1600px;
+}
 .reel-frame{
   position:relative;
   aspect-ratio:16/8.2;
@@ -251,6 +265,18 @@ section{ position:relative; }
 }
 .reel-caption span{ position:relative; padding:0 18px; }
 .reel-caption span:first-child{ padding-left:0; }
+
+
+#showreel > .head-row .head-sub{
+  max-width:340px;
+}
+
+@media(max-width:760px){
+  #showreel > .head-row{
+    margin-left:20px;
+    margin-right:20px;
+  }
+}
 
 /* ============================= MARQUEE / CLIENTS ============================= */
 #clients{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:56px 0; overflow:hidden; }
@@ -928,8 +954,12 @@ html {
 
 <!-- ============================= SHOWREEL ============================= -->
 <section id="showreel" class="section-pad">
+   <div class="head-row">
+      <div class="head-title fx-up">SELECTED<br>SHOWREEL</div>
+      <div class="head-sub fx-up">A one-minute cut of the frames, transitions and finishes VISIONXVISUALSS is known for.</div>
+    </div>
 <div class="reel-frame fx-scale"  data-label="WATCH REEL">
-
+  
   <video
     class="showreel-video"
     src="assets/videos/v5.mp4"

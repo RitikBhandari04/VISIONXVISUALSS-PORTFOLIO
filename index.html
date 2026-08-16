@@ -181,19 +181,38 @@ section{ position:relative; }
 #nav nav a:hover::after{ width:100%; }
 
 /* ============================= MOBILE / TABLET MENU ============================= */
-/* The menu becomes a full-screen glass layer on touch/mobile/tablet devices. */
+.mobile-menu-close{
+  display:none;
+}
+
+#mobileMenuBackdrop{
+  display:none;
+}
+
+#nav .menu-btn{
+  display:none;
+  position:relative;
+  z-index:705;
+  font-family:var(--f-mono);
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
 @media (max-width:1024px){
+
   #nav.menu-is-open{
     mix-blend-mode:normal;
     z-index:700;
   }
 
   #nav.menu-is-open .menu-btn{
-    position:relative;
-    z-index:705;
+    display:none;
+    visibility:hidden;
+    pointer-events:none;
   }
 
-  #nav nav.mobile-menu-open{
+  #nav nav{
     display:flex !important;
     position:fixed;
     inset:0;
@@ -205,24 +224,34 @@ section{ position:relative; }
     align-items:center;
     justify-content:center;
     gap:28px;
-    background:rgba(8,8,10,.46);
-    backdrop-filter:blur(18px) saturate(.85);
-    -webkit-backdrop-filter:blur(18px) saturate(.85);
-    z-index:700;
+    background:rgba(8,8,10,.50);
+    backdrop-filter:blur(24px) saturate(.72);
+    -webkit-backdrop-filter:blur(24px) saturate(.72);
+    z-index:701;
     mix-blend-mode:normal;
-    overflow-y:auto;
+    overflow:hidden;
+    visibility:hidden;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .28s ease, visibility .28s ease;
   }
 
-  #nav nav.mobile-menu-open::before{
+  #nav nav.mobile-menu-open{
+    visibility:visible;
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  #nav nav::before{
     content:'';
     position:absolute;
     inset:0;
-    background:rgba(8,8,10,.20);
+    background:rgba(8,8,10,.24);
     pointer-events:none;
-    z-index:-1;
+    z-index:0;
   }
 
-  #nav nav.mobile-menu-open a{
+  #nav nav a{
     position:relative;
     z-index:2;
     font-family:var(--f-display);
@@ -233,17 +262,17 @@ section{ position:relative; }
     transition:color .25s ease, transform .25s ease;
   }
 
-  #nav nav.mobile-menu-open a:hover{
+  #nav nav a:hover{
     color:var(--accent);
     transform:translateY(-2px);
   }
 
-  #nav nav.mobile-menu-open a::after{
+  #nav nav a::after{
     display:none;
   }
 
-  /* Dedicated close button inside the opened menu */
-  #nav nav.mobile-menu-open .mobile-menu-close{
+  /* Close button is created inside the nav and stays above all links. */
+  #nav nav .mobile-menu-close{
     display:flex;
     position:absolute;
     top:22px;
@@ -252,36 +281,36 @@ section{ position:relative; }
     height:48px;
     align-items:center;
     justify-content:center;
-    border:1px solid rgba(255,255,255,.18);
+    border:1px solid rgba(255,255,255,.22);
     border-radius:50%;
-    background:rgba(8,8,10,.42);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
+    background:rgba(8,8,10,.58);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
     color:var(--text);
     font-family:var(--f-mono);
     font-size:22px;
     line-height:1;
     z-index:710;
     cursor:pointer;
+    pointer-events:auto;
     transition:background .25s ease, border-color .25s ease, color .25s ease, transform .25s ease;
   }
 
-  #nav nav.mobile-menu-open .mobile-menu-close:hover{
+  #nav nav .mobile-menu-close:hover{
     background:var(--accent);
     border-color:var(--accent);
     color:#08080a;
     transform:rotate(90deg);
   }
-}
 
-/* Keep the close control out of desktop navigation. */
-.mobile-menu-close{
-  display:none;
-}
-#nav .menu-btn{ display:none; font-family:var(--f-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; }
-@media (max-width:1024px){
-  #nav nav{ display:none; }
-  #nav .menu-btn{ display:block; }
+  #nav .menu-btn{
+    display:block;
+  }
+
+  body.mobile-menu-open{
+    overflow:hidden;
+    touch-action:none;
+  }
 }
 
 /* ============================= HERO ============================= */
@@ -2668,13 +2697,84 @@ $('#dClose').addEventListener('click', closeDetail);
   });
 })();
 
-/* mobile menu toggle (simple) */
-$('.menu-btn').addEventListener('click', ()=>{
-  const nav = $('#nav nav');
-  const open = nav.style.display === 'flex';
-  nav.style.cssText = open ? '' : 'display:flex; position:fixed; inset:0; background:var(--bg); flex-direction:column; align-items:center; justify-content:center; gap:28px; z-index:600; mix-blend-mode:normal;';
-  nav.querySelectorAll('a').forEach(a=> a.style.fontSize = open ? '' : '20px');
-});
+/* =====================================================================
+   MOBILE / TABLET MENU — BLUR + CLOSE BUTTON + AUTO-CLOSE ON NAVIGATION
+   ===================================================================== */
+(function mobileMenu(){
+  const nav = $('#nav');
+  const menuBtn = $('.menu-btn');
+  const menu = $('#nav nav');
+
+  if(!nav || !menuBtn || !menu) return;
+
+  // Add the close button once, without touching the desktop navigation.
+  let closeBtn = menu.querySelector('.mobile-menu-close');
+
+  if(!closeBtn){
+    closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'mobile-menu-close';
+    closeBtn.setAttribute('aria-label','Close menu');
+    closeBtn.innerHTML = '×';
+    menu.prepend(closeBtn);
+  }
+
+  function isMobileTablet(){
+    return window.innerWidth <= 1024;
+  }
+
+  function openMenu(){
+    if(!isMobileTablet()) return;
+
+    nav.classList.add('menu-is-open');
+    menu.classList.add('mobile-menu-open');
+    document.body.classList.add('mobile-menu-open');
+
+    menuBtn.setAttribute('aria-expanded','true');
+    menuBtn.setAttribute('aria-label','Close menu');
+  }
+
+  function closeMenu(){
+    nav.classList.remove('menu-is-open');
+    menu.classList.remove('mobile-menu-open');
+    document.body.classList.remove('mobile-menu-open');
+
+    menuBtn.setAttribute('aria-expanded','false');
+    menuBtn.setAttribute('aria-label','Open menu');
+  }
+
+  function toggleMenu(){
+    if(menu.classList.contains('mobile-menu-open')){
+      closeMenu();
+    }else{
+      openMenu();
+    }
+  }
+
+  menuBtn.addEventListener('click', toggleMenu);
+  closeBtn.addEventListener('click', closeMenu);
+
+  // Close immediately when any navigation option is selected.
+  menu.querySelectorAll('a').forEach(link=>{
+    link.addEventListener('click', ()=>{
+      closeMenu();
+    });
+  });
+
+  // Close with Escape.
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape' && menu.classList.contains('mobile-menu-open')){
+      closeMenu();
+    }
+  });
+
+  // Never leave the mobile menu state behind after resizing to desktop.
+  window.addEventListener('resize', ()=>{
+    if(!isMobileTablet()){
+      closeMenu();
+    }
+  });
+})();
 </script>
 </body>
 </html>

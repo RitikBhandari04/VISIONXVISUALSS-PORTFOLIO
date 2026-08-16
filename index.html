@@ -224,6 +224,14 @@ section{ position:relative; }
 .brand-item:hover .view{ opacity:1; transform:translateX(0); }
 
 /* ============================= WORK GRID ============================= */
+.project-card .footage{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform 1.2s var(--ease);
+}
 .work-grid{ display:grid; grid-template-columns:repeat(12,1fr); gap:24px; }
 .project-card{
   position:relative; border-radius:4px; overflow:hidden; cursor:none;
@@ -698,23 +706,67 @@ const PHENIX_DATA = {
     { title:"POST PRODUCTION", items:["Sound Design","Storytelling","Pacing"], grad:"linear-gradient(135deg,#2a1408,#0a0a0b 60%)" }
   ],
 
-  projects: [
-    { id:"p01", title:"PROJECT 01", client:"Brand / Client", year:"2026", category:"Commercial Edit", role:"Video Editor",
-      desc:"A fast-paced commercial cut built around rhythm and product hero moments, edited to land every beat with the soundtrack.",
-      grad:"linear-gradient(135deg,#241a15,#0a0a0b 60%,#2a140a)" },
-    { id:"p02", title:"PROJECT 02", client:"Brand / Client", year:"2025", category:"Social Campaign", role:"Editor / Motion Designer",
-      desc:"A vertical-first social campaign designed for retention in the first three seconds, with kinetic type carrying the message.",
-      grad:"linear-gradient(135deg,#1a1c24,#0a0a0b 60%,#0a1420)" },
-    { id:"p03", title:"PROJECT 03", client:"Brand / Client", year:"2025", category:"Music Video", role:"Video Editor",
-      desc:"A narrative music video cut on-tempo, blending performance footage with abstract visual sequences.",
-      grad:"linear-gradient(135deg,#241a24,#0a0a0b 60%,#200a20)" },
-    { id:"p04", title:"PROJECT 04", client:"Brand / Client", year:"2024", category:"Motion Design", role:"Motion Designer",
-      desc:"A system of animated brand assets and title sequences built for repeat use across a content calendar.",
-      grad:"linear-gradient(135deg,#2a1408,#0a0a0b 60%,#1a0800)" },
-    { id:"p05", title:"PROJECT 05", client:"Brand / Client", year:"2024", category:"VFX / Commercial", role:"VFX / Compositor",
-      desc:"A commercial spot with heavy compositing work — screen replacements, particle simulation and colour finishing.",
-      grad:"linear-gradient(135deg,#141820,#0a0a0b 60%,#080d14)" }
-  ],
+projects: [
+  {
+    id:"p01",
+    title:"PROJECT 01",
+    client:"Brand / Client",
+    year:"2026",
+    category:"Commercial Edit",
+    role:"Video Editor",
+    desc:"A fast-paced commercial cut built around rhythm and product hero moments, edited to land every beat with the soundtrack.",
+    grad:"linear-gradient(135deg,#241a15,#0a0a0b 60%,#2a140a)",
+    video:"assets/videos/v1.mp4"
+  },
+
+  {
+    id:"p02",
+    title:"PROJECT 02",
+    client:"Brand / Client",
+    year:"2025",
+    category:"Social Campaign",
+    role:"Editor / Motion Designer",
+    desc:"A vertical-first social campaign designed for retention in the first three seconds, with kinetic type carrying the message.",
+    grad:"linear-gradient(135deg,#1a1c24,#0a0a0b 60%,#0a1420)",
+    video:"assets/videos/v2.mp4"
+  },
+
+  {
+    id:"p03",
+    title:"PROJECT 03",
+    client:"Brand / Client",
+    year:"2025",
+    category:"Music Video",
+    role:"Video Editor",
+    desc:"A narrative music video cut on-tempo, blending performance footage with abstract visual sequences.",
+    grad:"linear-gradient(135deg,#241a24,#0a0a0b 60%,#200a20)",
+    video:"assets/videos/v3.mp4"
+  },
+
+  {
+    id:"p04",
+    title:"PROJECT 04",
+    client:"Brand / Client",
+    year:"2024",
+    category:"Motion Design",
+    role:"Motion Designer",
+    desc:"A system of animated brand assets and title sequences built for repeat use across a content calendar.",
+    grad:"linear-gradient(135deg,#2a1408,#0a0a0b 60%,#1a0800)",
+    video:"assets/videos/v4.mp4"
+  },
+
+  {
+    id:"p05",
+    title:"PROJECT 05",
+    client:"Brand / Client",
+    year:"2024",
+    category:"VFX / Commercial",
+    role:"VFX / Compositor",
+    desc:"A commercial spot with heavy compositing work — screen replacements, particle simulation and colour finishing.",
+    grad:"linear-gradient(135deg,#141820,#0a0a0b 60%,#080d14)",
+    video:"assets/videos/v5.mp4"
+  }
+],
 
   experience: [
     { year:"2026", company:"BRAND / COMPANY NAME", role:"Video Editor", project:"Campaign Series 04",
@@ -995,26 +1047,53 @@ function initHeroReveal(){
 /* =====================================================================
    WORK GRID
    ===================================================================== */
+/* =====================================================================
+   WORK GRID
+   ===================================================================== */
 (function work(){
   const grid = $('#workGrid');
+
   grid.innerHTML = PHENIX_DATA.projects.map((p,i)=>`
-    <article class="project-card" data-id="${p.id}" data-cursor="view" data-label="VIEW PROJECT →">
+    <article class="project-card"
+      data-id="${p.id}"
+      data-cursor="view"
+      data-label="VIEW PROJECT →">
+
       <div class="frame">
-        <div class="footage" style="background-image:${p.grad};"></div>
+
+        <video
+          class="footage"
+          src="${p.video}"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto">
+        </video>
+
         <div class="scrim"></div>
-        <div class="pc-top mono"><span>0${i+1}</span><span>${p.year}</span></div>
+
+        <div class="pc-top mono">
+          <span>0${i+1}</span>
+          <span>${p.year}</span>
+        </div>
+
         <div class="pc-bottom">
           <h3>${p.title}</h3>
           <div class="client">${p.client} — ${p.category}</div>
           <div class="view-link mono">VIEW PROJECT →</div>
         </div>
+
       </div>
     </article>
   `).join('');
 
   $$('.project-card').forEach(card=>{
-    card.addEventListener('click', ()=> openDetail(card.dataset.id));
+    card.addEventListener('click', ()=>{
+      openDetail(card.dataset.id);
+    });
   });
+
 })();
 
 /* =====================================================================

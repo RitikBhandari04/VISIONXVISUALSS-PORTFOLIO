@@ -52,7 +52,7 @@ img{ display:block; max-width:100%; }
 /* ============================= LAYOUT HELPERS ============================= */
 .wrap{ max-width:1400px; margin:0 auto; padding:0 clamp(20px,5vw,64px); }
 section{ position:relative; }
-.section-pad{ padding:clamp(80px,12vw,180px) 0; }
+.section-pad{ padding:clamp(55px,8vw,110px) 0; }
 .hr{ height:1px; width:100%; background:var(--line); border:0; }
 
 /* ============================= GRAIN + VIGNETTE ============================= */
@@ -85,11 +85,62 @@ section{ position:relative; }
 #cursor.big .ring{ width:96px; height:96px; margin:-48px 0 0 -48px; background:var(--accent); border-color:var(--accent); }
 #cursor.big .dot{ opacity:0; }
 #cursor.big .label{ opacity:1; transform:scale(1); }
-#cursor.view .ring{ width:88px; height:88px; margin:-44px 0 0 -44px; background:var(--text); border-color:var(--text); }
+#cursor.view .ring{
+  width:88px;
+  height:88px;
+  margin:-44px 0 0 -44px;
+  background:var(--text);
+  border-color:var(--text);
+}
 #cursor.view .dot{ opacity:0; }
-#cursor.view .label{ opacity:1; transform:scale(1); color:var(--bg); }
-#cursor.open .ring{ width:64px; height:64px; margin:-32px 0 0 -32px; border-color:var(--accent); }
-#cursor.open .label{ opacity:1; transform:scale(1); color:var(--accent); }
+#cursor.view .label{
+  opacity:1;
+  transform:scale(1);
+  color:var(--bg);
+
+  /* Keep VIEW PROJECT fully inside the circle */
+  font-size:8px;
+  letter-spacing:.06em;
+  line-height:1.2;
+  white-space:nowrap;
+  text-align:center;
+  width:78px;
+  max-width:78px;
+  overflow:hidden;
+}
+#cursor.open .ring{
+  width:64px;
+  height:64px;
+  margin:-32px 0 0 -32px;
+  border-color:var(--accent);
+  background:transparent;
+}
+#cursor.open .label{
+  opacity:0;
+  transform:scale(.6);
+}
+
+/* BACK TO WORK cursor — orange boundary only */
+#cursor.close .ring{
+  width:64px;
+  height:64px;
+  margin:-32px 0 0 -32px;
+  border-color:var(--accent);
+  background:transparent;
+}
+
+#cursor.close .dot{
+  opacity:1;
+  width:8px;
+  height:8px;
+  margin:-4px 0 0 -4px;
+  background:var(--text);
+}
+
+#cursor.close .label{
+  opacity:0;
+  transform:scale(.6);
+}
 
 /* ============================= LOADER ============================= */
 #loader{
@@ -100,6 +151,11 @@ section{ position:relative; }
 #loader h1{
   font-family:var(--f-display); font-size:clamp(48px,12vw,140px); letter-spacing:.02em; line-height:.9;
   color:var(--text);
+}
+
+/* Orange X in the opening loader */
+#loader .loader-accent-x{
+  color:var(--accent);
 }
 #loader .bar-track{ width:min(60vw,420px); height:1px; background:var(--line); position:relative; }
 #loader .bar-fill{ position:absolute; left:0; top:0; height:100%; width:0%; background:var(--accent); }
@@ -173,7 +229,7 @@ section{ position:relative; }
 @keyframes scrollcue{ 0%{ top:-100%; } 50%{ top:0%; } 100%{ top:100%; } }
 
 /* ============================= SECTION HEADS ============================= */
-.head-row{ display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap; margin-bottom:56px; }
+.head-row{ display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:28px; }
 .head-title{ font-family:var(--f-head); font-weight:600; font-size:clamp(34px,6vw,68px); letter-spacing:-.01em; line-height:1; }
 .head-sub{ max-width:340px; color:var(--text-dim); font-size:14px; line-height:1.6; }
 
@@ -187,7 +243,7 @@ section{ position:relative; }
 #showreel > .head-row{
   margin-left:clamp(20px,5vw,64px);
   margin-right:clamp(20px,5vw,64px);
-  margin-bottom:56px;
+  margin-bottom:20px;
 }
 
 #showreel .wrap{
@@ -277,22 +333,6 @@ section{ position:relative; }
     margin-right:20px;
   }
 }
-
-/* ============================= MARQUEE / CLIENTS ============================= */
-#clients{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:56px 0; overflow:hidden; }
-.marquee{ display:flex; width:max-content; gap:120px; animation:marquee 26s linear infinite; }
-.marquee:hover{ animation-play-state:paused; }
-@keyframes marquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
-.brand-item{
-  position:relative; font-family:var(--f-head); font-weight:700; font-size:clamp(24px,4vw,40px);
-  color:var(--text-faint); transition:color .4s var(--ease); white-space:nowrap; display:flex; align-items:center; gap:14px;
-}
-.brand-item:hover{ color:var(--text); }
-.brand-item .view{
-  font-family:var(--f-mono); font-size:10px; letter-spacing:.14em; color:var(--accent); opacity:0; transform:translateX(-8px);
-  transition:all .35s var(--ease);
-}
-.brand-item:hover .view{ opacity:1; transform:translateX(0); }
 
 /* ============================= WORK GRID ============================= */
 .project-card .footage{
@@ -387,27 +427,6 @@ section{ position:relative; }
 .portrait .grain-inner{ position:absolute; inset:0; opacity:.5; mix-blend-mode:overlay; }
 .portrait .frame-label{ position:absolute; left:18px; bottom:18px; font-family:var(--f-mono); font-size:10px; letter-spacing:.14em; color:var(--text-dim); }
 @media (max-width:860px){ #about .about-grid{ grid-template-columns:1fr; gap:48px; } }
-
-/* ============================= EXPERIENCE ============================= */
-#experience{ border-top:1px solid var(--line); }
-.tl-row{ border-bottom:1px solid var(--line); }
-.tl-head{
-  display:grid; grid-template-columns:120px 1fr 44px; align-items:center; gap:24px; padding:30px 0; cursor:pointer;
-}
-.tl-head .year{ font-family:var(--f-display); font-size:32px; color:var(--text-dim); transition:color .3s; }
-.tl-row.active .tl-head .year{ color:var(--accent); }
-.tl-head .co{ font-family:var(--f-head); font-weight:600; font-size:clamp(18px,2.6vw,28px); }
-.tl-head .role{ font-family:var(--f-mono); font-size:11px; letter-spacing:.1em; color:var(--text-dim); margin-top:4px; }
-.tl-head .plus{ width:20px; height:20px; position:relative; }
-.tl-head .plus::before, .tl-head .plus::after{ content:''; position:absolute; background:var(--text); transition:transform .35s var(--ease); }
-.tl-head .plus::before{ width:100%; height:1px; top:50%; left:0; }
-.tl-head .plus::after{ width:1px; height:100%; left:50%; top:0; }
-.tl-row.active .plus::after{ transform:rotate(90deg); }
-.tl-body{ height:0; overflow:hidden; transition:height .5s var(--ease); }
-.tl-body-inner{ display:grid; grid-template-columns:1fr 260px; gap:32px; padding:0 0 34px; }
-.tl-body-inner p{ color:var(--text-dim); font-size:14px; line-height:1.8; max-width:56ch; }
-.tl-body-inner .thumb{ aspect-ratio:16/10; border-radius:4px; overflow:hidden; position:relative; }
-@media (max-width:760px){ .tl-head{ grid-template-columns:60px 1fr 30px; } .tl-body-inner{ grid-template-columns:1fr; } }
 
 /* ============================= PROCESS ============================= */
 #process{ border-top:1px solid var(--line); }
@@ -853,6 +872,158 @@ a:focus-visible, button:focus-visible{ outline:1px solid var(--accent); outline-
 html {
     scroll-behavior: smooth;
 }
+
+/* ============================================================
+   CLEAN PROJECT PLAYER — VIDEO + BACK TO WORK ONLY
+   ============================================================ */
+
+#detail{
+  overflow:hidden;
+}
+
+#detail .d-top{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  z-index:20;
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  padding:20px clamp(20px,5vw,64px);
+  border:0;
+  background:transparent;
+}
+
+#detail .d-close{
+  padding:10px 16px;
+  border:1px solid var(--line-strong);
+  border-radius:999px;
+  background:rgba(8,8,10,.65);
+  backdrop-filter:blur(8px);
+}
+
+#detail .d-frame{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+
+  /* Smaller cinematic player */
+  width:min(78vw, 1100px);
+  max-height:72vh;
+  aspect-ratio:16/9;
+
+  margin:0;
+  border-radius:8px;
+  overflow:hidden;
+  background:#050505;
+  box-shadow:0 30px 90px rgba(0,0,0,.55);
+}
+
+@media(max-width:760px){
+  #detail .d-top{
+    padding:14px 20px;
+  }
+
+  #detail .d-frame{
+    width:calc(100% - 32px);
+    max-height:70vh;
+    aspect-ratio:16/9;
+  }
+}
+
+
+/* ============================================================
+   BLURRED VIDEO BACKGROUND — PROJECT + MORE WORK PLAYER
+   ============================================================ */
+
+#detail{
+  overflow:hidden;
+  background:rgba(8,8,10,.42);
+  isolation:isolate;
+}
+
+#detail::before{
+  content:'';
+  position:absolute;
+  inset:-35px;
+  z-index:-2;
+  background:rgba(8,8,10,.28);
+  backdrop-filter:blur(18px) saturate(.9);
+  -webkit-backdrop-filter:blur(18px) saturate(.9);
+  pointer-events:none;
+}
+
+#detail::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:rgba(8,8,10,.24);
+  pointer-events:none;
+}
+
+#detail .d-frame{
+  background:transparent;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.55),
+    0 0 45px rgba(0,0,0,.18);
+}
+
+.detail-video-bg{
+  position:absolute;
+  inset:-40px;
+  width:calc(100% + 80px);
+  height:calc(100% + 80px);
+  object-fit:cover;
+  object-position:center;
+  filter:blur(28px);
+  -webkit-filter:blur(28px);
+  transform:scale(1.12);
+  opacity:.9;
+  z-index:0;
+  pointer-events:none;
+}
+
+.detail-video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  background:transparent;
+  z-index:1;
+}
+
+.video-overlay{
+  z-index:2;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.08) 0%,
+      transparent 45%,
+      rgba(0,0,0,.55) 100%
+    );
+}
+
+.video-center-play{
+  z-index:5;
+}
+
+.video-controls{
+  z-index:10;
+}
+
+#detail .d-close{
+  background:rgba(8,8,10,.42);
+  border-color:rgba(255,255,255,.16);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+
 </style>
 </head>
 <body>
@@ -863,7 +1034,7 @@ html {
 <div id="cursor"><div class="ring"><span class="label"></span></div><div class="dot"></div></div>
 
 <div id="loader">
-  <div class="lwrap"><h1 id="loaderTitle">VISIONXVISUALSS</h1></div>
+  <div class="lwrap"><h1 id="loaderTitle">VISION<span class="loader-accent-x">X</span>VISUALSS</h1></div>
   <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
   <div class="pct mono" id="pctText">LOADING 000%</div>
 </div>
@@ -978,10 +1149,6 @@ html {
 
 </div>
 </section>  
-<!-- ============================= CLIENTS ============================= -->
-<section id="clients">
-  <div class="marquee" id="marqueeTrack"></div>
-</section>
 
 <!-- ============================= WORK ============================= -->
 <section id="work" class="section-pad">
@@ -999,7 +1166,7 @@ html {
   <div class="wrap">
     <div class="head-row" style="margin-bottom:20px;">
       <div class="head-title fx-up">WHAT<br>I DO</div>
-      <div class="head-sub fx-up">Four disciplines, one continuous process from raw footage to finished film.</div>
+      <div class="head-sub fx-up">Three disciplines, one continuous process from raw footage to finished film.</div>
     </div>
     <div id="servicesList"></div>
   </div>
@@ -1047,19 +1214,6 @@ html {
     </div>
   </div>
 </section>
-
-<!-- ============================= EXPERIENCE ============================= -->
-<section id="experience" class="section-pad">
-  <div class="wrap">
-    <div class="head-row">
-      <div class="head-title fx-up">EXPERIENCE</div>
-      <div class="head-sub fx-up">Studios, brands and collectives VISIONXVISUALSS has cut for.</div>
-    </div>
-    <div id="timeline"></div>
-  </div>
-</section>
-
-
 <!-- ============================= MORE WORK ============================= -->
 <section id="more" class="section-pad">
   <div class="wrap">
@@ -1069,7 +1223,6 @@ html {
   </div>
   <div class="wrap"><div class="hscroll" id="hscroll"></div></div>
 </section>
-
 <!-- ============================= CONTACT ============================= -->
 <section id="contact" class="section-pad">
   <div class="wrap">
@@ -1084,123 +1237,74 @@ html {
   </div>
 </section>
 
-<footer>
-  <div class="wrap">
-    <div class="fgrid">
-      <div>
-        <div class="fmark">VISIONXVISUALSS<sup style="font-size:10px;">®</sup></div>
-        <div class="mono" style="font-size:11px; color:var(--text-dim); margin-top:6px;">LOKESH</div>
-        <div class="froles" style="margin-top:10px;"><span>VIDEO EDITOR</span><span>·</span><span>VISUAL STORYTELLER</span></div>
-      </div>
-      <div class="fsocial">
-        <a href="https://www.instagram.com/visionxvisualss/" target="_blank" rel="noopener">INSTAGRAM</a>
-        <a href="https://youtube.com" target="_blank" rel="noopener">YOUTUBE</a>
-      </div>
-    </div>
-    <div class="fbottom">© 2026 VISIONXVISUALSS. ALL RIGHTS RESERVED.</div>
-  </div>
-</footer>
-
 <!-- ============================= PROJECT DETAIL OVERLAY ============================= -->
 <div id="detail">
   <div class="d-top">
-    <div class="mono" style="font-size:11px; letter-spacing:.1em;">PHENIX / PROJECT</div>
-    <button class="d-close" id="dClose" data-cursor="open">← BACK TO WORK</button>
+    <button class="d-close" id="dClose" data-cursor="close">← BACK TO WORK</button>
   </div>
-  <div class="d-hero">
-    <h2 id="dTitle">PROJECT</h2>
-    <div class="d-meta">
-      <div><div class="k">CLIENT</div><div class="v" id="dClient">—</div></div>
-      <div><div class="k">YEAR</div><div class="v" id="dYear">—</div></div>
-      <div><div class="k">ROLE</div><div class="v" id="dRole">—</div></div>
-    </div>
-  </div>
+
   <div class="d-frame" id="dVideoFrame">
+    <video
+      id="dVideoBg"
+      class="detail-video-bg"
+      muted
+      playsinline
+      preload="auto">
+    </video>
 
-  <video
-    id="dVideo"
-    class="detail-video"
-    preload="metadata"
-    playsinline>
-  </video>
+    <video
+      id="dVideo"
+      class="detail-video"
+      preload="metadata"
+      playsinline>
+    </video>
 
-  <div class="video-overlay"></div>
+    <div class="video-overlay"></div>
 
-  <div class="video-center-play" id="videoCenterPlay">
-    <span>▶</span>
-  </div>
-
-  <div class="video-controls">
-
-    <div class="video-progress-wrap">
-      <input
-        type="range"
-        id="videoProgress"
-        min="0"
-        max="100"
-        value="0"
-        step="0.1">
+    <div class="video-center-play" id="videoCenterPlay">
+      <span>▶</span>
     </div>
 
-    <div class="video-control-row">
-
-      <div class="video-left-controls">
-
-        <button id="videoPlay" class="video-btn" title="Play / Pause">
-          ▶
-        </button>
-
-        <button id="videoMute" class="video-btn" title="Mute">
-          🔊
-        </button>
-
+    <div class="video-controls">
+      <div class="video-progress-wrap">
         <input
           type="range"
-          id="videoVolume"
-          class="volume-slider"
+          id="videoProgress"
           min="0"
-          max="1"
-          value="1"
-          step="0.05">
-
-        <span class="video-time">
-          <span id="videoCurrent">00:00</span>
-          /
-          <span id="videoDuration">00:00</span>
-        </span>
-
+          max="100"
+          value="0"
+          step="0.1">
       </div>
 
-      <div class="video-right-controls">
+      <div class="video-control-row">
+        <div class="video-left-controls">
+          <button id="videoPlay" class="video-btn" title="Play / Pause">▶</button>
 
-        <button id="videoSpeed" class="video-btn speed-btn" title="Playback Speed">
-          1×
-        </button>
+          <button id="videoMute" class="video-btn" title="Mute">🔊</button>
 
-        <button id="videoPiP" class="video-btn" title="Picture in Picture">
-          ▣
-        </button>
+          <input
+            type="range"
+            id="videoVolume"
+            class="volume-slider"
+            min="0"
+            max="1"
+            value="1"
+            step="0.05">
 
-        <button id="videoFullscreen" class="video-btn" title="Fullscreen">
-          ⛶
-        </button>
+          <span class="video-time">
+            <span id="videoCurrent">00:00</span>
+            /
+            <span id="videoDuration">00:00</span>
+          </span>
+        </div>
 
+        <div class="video-right-controls">
+          <button id="videoSpeed" class="video-btn speed-btn" title="Playback Speed">1×</button>
+          <button id="videoPiP" class="video-btn" title="Picture in Picture">▣</button>
+          <button id="videoFullscreen" class="video-btn" title="Fullscreen">⛶</button>
+        </div>
       </div>
-
     </div>
-
-  </div>
-</div>
-
-  <div class="d-body">
-    <h3>THE PROJECT</h3>
-    <p id="dDesc">Description.</p>
-  </div>
-  <div class="d-tabs" id="dTabs"></div>
-  <div class="d-panels" id="dPanels"></div>
-  <div class="d-nav">
-    <a id="dBack" data-cursor="open">← BACK TO WORK</a>
-    <a id="dNext" data-cursor="open">NEXT PROJECT →</a>
   </div>
 </div>
 
@@ -1215,8 +1319,6 @@ html {
 const PHENIX_DATA = {
   brand: { name: "VISIONXVISUALSS", person: "Lokesh", roles: ["Video Editor","Visual Storyteller"] },
 
-  brands: ["BRAND A","BRAND B","BRAND C","BRAND D","BRAND E","BRAND F"],
-
   services: [
     { title:"VIDEO EDITING", items:["Commercials","YouTube","Short-form","Social Media","Music Videos"], grad:"linear-gradient(135deg,#241a15,#0a0a0b 60%)" },
     { title:"VISUAL EFFECTS", items:["Compositing","VFX","Visual Enhancements"], grad:"linear-gradient(135deg,#241a24,#0a0a0b 60%)" },
@@ -1227,7 +1329,6 @@ projects: [
   {
     id:"p01",
     title:"PROJECT 01",
-    client:"Brand / Client",
     year:"2026",
     category:"Commercial Edit",
     role:"Video Editor",
@@ -1239,7 +1340,6 @@ projects: [
   {
     id:"p02",
     title:"PROJECT 02",
-    client:"Brand / Client",
     year:"2025",
     category:"Social Campaign",
     role:"Editor / Motion Designer",
@@ -1251,7 +1351,6 @@ projects: [
   {
     id:"p03",
     title:"PROJECT 03",
-    client:"Brand / Client",
     year:"2025",
     category:"Music Video",
     role:"Video Editor",
@@ -1263,7 +1362,6 @@ projects: [
   {
     id:"p04",
     title:"PROJECT 04",
-    client:"Brand / Client",
     year:"2024",
     category:"Motion Design",
     role:"Motion Designer",
@@ -1284,15 +1382,6 @@ projects: [
     video:"assets/videos/v5.mp4"
   }
 ],
-
-  experience: [
-    { year:"2026", company:"BRAND / COMPANY NAME", role:"Video Editor", project:"Campaign Series 04",
-      desc:"Led edit on a multi-part campaign series, working directly with the creative director on pacing and story structure." },
-    { year:"2025", company:"BRAND / COMPANY NAME", role:"Video Editor / Motion Designer", project:"Launch Film",
-      desc:"Delivered a full launch film with custom motion graphics and a finished sound design pass." },
-    { year:"2024", company:"BRAND / COMPANY NAME", role:"Editor", project:"Brand Documentary",
-      desc:"Assembled and finished a short brand documentary from over forty hours of raw interview and B-roll footage." }
-  ],
 
   process: ["RAW FOOTAGE","ROUGH CUT","VFX","SOUND DESIGN","FINAL"],
 
@@ -1380,14 +1469,14 @@ document.body.style.overflow='hidden';
     requestAnimationFrame(loop);
   })();
 
-  const map = { big:'WATCH REEL', view:'VIEW →', open:'OPEN →', play:'PLAY →' };
+  const map = { big:'WATCH REEL', view:'VIEW →', open:'OPEN →', close:'', play:'PLAY →' };
   document.addEventListener('mouseover', e=>{
     const t = e.target.closest('[data-cursor]');
     cur.className = '';
     if(t){
       const type = t.dataset.cursor;
       cur.classList.add(type);
-      label.textContent = t.dataset.label || map[type] || '';
+      label.textContent = type === 'close' ? '' : (t.dataset.label || map[type] || '');
     } else if(e.target.closest('a, button')){
       cur.classList.add('open'); label.textContent='OPEN →';
     }
@@ -1570,17 +1659,6 @@ function initHeroReveal(){
 })();
 
 /* =====================================================================
-   MARQUEE
-   ===================================================================== */
-(function marquee(){
-  const track = $('#marqueeTrack');
-  const list = [...PHENIX_DATA.brands, ...PHENIX_DATA.brands];
-  track.innerHTML = list.map(b => `
-    <div class="brand-item" data-cursor="view" data-label="VIEW WORK →">${b}<span class="view mono">VIEW WORK →</span></div>
-  `).join('');
-})();
-
-/* =====================================================================
    WORK GRID
    ===================================================================== */
 /* =====================================================================
@@ -1616,7 +1694,6 @@ function initHeroReveal(){
 
         <div class="pc-bottom">
           <h3>${p.title}</h3>
-          <div class="client">${p.client} — ${p.category}</div>
           <div class="view-link mono">VIEW PROJECT →</div>
         </div>
 
@@ -1638,7 +1715,7 @@ function initHeroReveal(){
 (function services(){
   const list = $('#servicesList');
   list.innerHTML = PHENIX_DATA.services.map((s,i)=>`
-    <div class="service-row" data-cursor="view" data-label="EXPLORE">
+    <div class="service-row"  data-label="EXPLORE">
       <div class="idx mono">0${i+1}</div>
       <div>
         <h3>${s.title}</h3>
@@ -1647,47 +1724,6 @@ function initHeroReveal(){
       <div class="service-preview"><div class="footage" style="background-image:${s.grad};"></div></div>
     </div>
   `).join('');
-})();
-
-/* =====================================================================
-   EXPERIENCE TIMELINE
-   ===================================================================== */
-(function timeline(){
-  const el = $('#timeline');
-  el.innerHTML = PHENIX_DATA.experience.map((e,i)=>`
-    <div class="tl-row" data-i="${i}">
-      <div class="tl-head">
-        <div class="year">${e.year}</div>
-        <div>
-          <div class="co">${e.company}</div>
-          <div class="role mono">${e.role}</div>
-        </div>
-        <div class="plus"></div>
-      </div>
-      <div class="tl-body">
-        <div class="tl-body-inner">
-          <div>
-            <div class="mono" style="font-size:11px;color:var(--text-faint);margin-bottom:8px;">${e.project}</div>
-            <p>${e.desc}</p>
-          </div>
-          <div class="thumb"><div class="footage" style="position:absolute;inset:0;background-image:linear-gradient(150deg,#1c1c1c,#0a0a0b 70%);"></div></div>
-        </div>
-      </div>
-    </div>
-  `).join('');
-
-  $$('.tl-row').forEach(row=>{
-    const head = row.querySelector('.tl-head');
-    const body = row.querySelector('.tl-body');
-    head.addEventListener('click', ()=>{
-      const active = row.classList.contains('active');
-      $$('.tl-row').forEach(r=>{ r.classList.remove('active'); r.querySelector('.tl-body').style.height='0px'; });
-      if(!active){
-        row.classList.add('active');
-        body.style.height = body.scrollHeight + 'px';
-      }
-    });
-  });
 })();
 
 /* =====================================================================
@@ -1727,18 +1763,22 @@ function initHeroReveal(){
 (function more(){
   const el = $('#hscroll');
 
-  el.innerHTML = PHENIX_DATA.more.map(m=>`
-    <div class="hcard"  data-label="VIEW →">
+  el.innerHTML = PHENIX_DATA.more.map((m,i)=>`
+    <div
+      class="hcard"
+      data-more-index="${i}"
+      data-cursor="view"
+      data-label="VIEW →">
 
       <video
-  class="more-video"
-  src="${m.video}"
-  autoplay
-  muted
-  loop
-  playsinline
-  preload="auto">
-</video>
+        class="more-video"
+        src="${m.video}"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto">
+      </video>
 
       <div class="scrim"></div>
 
@@ -1749,6 +1789,30 @@ function initHeroReveal(){
 
     </div>
   `).join('');
+
+  /* ==========================================
+     MORE WORK → SAME PLAYER AS PROJECT VIDEOS
+     ========================================== */
+
+  $$('.hcard').forEach(card=>{
+    card.addEventListener('click', e=>{
+      e.stopPropagation();
+
+      const index = Number(card.dataset.moreIndex);
+      const item = PHENIX_DATA.more[index];
+
+      if(!item) return;
+
+      loadMoreVideo(item);
+
+      $('#detail').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  /* ==========================================
+     HORIZONTAL DRAG SCROLL
+     ========================================== */
 
   let isDown = false;
   let startX;
@@ -1805,6 +1869,32 @@ function updateDetailPlayUI(){
   }
 }
 
+
+function syncDetailVideoBackground(src){
+  const bg = $('#dVideoBg');
+  if(!bg) return;
+
+  bg.pause();
+  bg.removeAttribute('src');
+  bg.load();
+
+  bg.src = src;
+  bg.muted = true;
+  bg.loop = true;
+  bg.currentTime = 0;
+  bg.load();
+
+  const startBackground = () => {
+    bg.play().catch(()=>{});
+  };
+
+  if(bg.readyState >= 1){
+    startBackground();
+  }else{
+    bg.addEventListener('loadedmetadata', startBackground, {once:true});
+  }
+}
+
 function loadProjectVideo(project, autoplay=false){
   const video = $('#dVideo');
 
@@ -1817,6 +1907,7 @@ function loadProjectVideo(project, autoplay=false){
   video.load();
 
   video.src = project.video;
+  syncDetailVideoBackground(project.video);
   video.currentTime = 0;
   video.volume = 1;
   video.muted = false;
@@ -1852,6 +1943,57 @@ function loadProjectVideo(project, autoplay=false){
   video.load();
 }
 
+function loadMoreVideo(item){
+  const video = $('#dVideo');
+
+  if(!video) return;
+
+  video.pause();
+
+  // Remove the previous project's video.
+  video.removeAttribute('src');
+  video.load();
+
+  // Load the selected More Work video.
+  video.src = item.video;
+  syncDetailVideoBackground(item.video);
+  video.currentTime = 0;
+  video.volume = 1;
+  video.muted = false;
+  video.playbackRate = 1;
+
+  // Reset player controls.
+  $('#videoVolume').value = 1;
+  $('#videoProgress').value = 0;
+  $('#videoCurrent').textContent = '00:00';
+  $('#videoDuration').textContent = '00:00';
+  $('#videoPlay').textContent = '▶';
+  $('#videoMute').textContent = '🔊';
+  $('#videoSpeed').textContent = '1×';
+
+  $('#dVideoFrame').classList.add('paused');
+
+  const onMetadata = () => {
+    $('#videoDuration').textContent =
+      formatVideoTime(video.duration);
+
+    // Start playing immediately after the card click.
+    video.play().then(()=>{
+      updateDetailPlayUI();
+    }).catch(()=>{
+      updateDetailPlayUI();
+    });
+  };
+
+  video.addEventListener(
+    'loadedmetadata',
+    onMetadata,
+    {once:true}
+  );
+
+  video.load();
+}
+
 function openDetail(id){
   const projects = PHENIX_DATA.projects;
   const idx = projects.findIndex(p => p.id === id);
@@ -1880,47 +2022,8 @@ function renderDetail(autoplay=false){
 
   const p = PHENIX_DATA.projects[currentIdx];
 
-  $('#dTitle').textContent = p.title;
-  $('#dClient').textContent = p.client;
-  $('#dYear').textContent = p.year;
-  $('#dRole').textContent = p.role;
-  $('#dDesc').textContent = p.desc;
-
+  // Project player intentionally contains only the video.
   loadProjectVideo(p, autoplay);
-
-  // Keep the existing tabs, but make Final Edit the
-  // actual project video. Other tabs remain ready for
-  // future assets.
-  $('#dTabs').innerHTML =
-    PHENIX_DATA.detailTabs.map((tab,i)=>`
-      <button
-        type="button"
-        data-i="${i}"
-        class="${i === 0 ? 'on' : ''}">
-        ${tab}
-      </button>
-    `).join('');
-
-  $('#dPanels').innerHTML = '';
-
-  $$('#dTabs button').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-
-      $$('#dTabs button').forEach(b=>{
-        b.classList.remove('on');
-      });
-
-      btn.classList.add('on');
-
-      const tab =
-        PHENIX_DATA.detailTabs[Number(btn.dataset.i)];
-
-      if(tab === 'Final Edit'){
-        loadProjectVideo(PHENIX_DATA.projects[currentIdx], true);
-      }
-
-    });
-  });
 
   $('#detail').scrollTo(0,0);
 }
@@ -2091,14 +2194,6 @@ function renderDetail(autoplay=false){
 })();
 
 $('#dClose').addEventListener('click', closeDetail);
-$('#dBack').addEventListener('click', closeDetail);
-
-$('#dNext').addEventListener('click', ()=>{
-  currentIdx =
-    (currentIdx + 1) % PHENIX_DATA.projects.length;
-
-  renderDetail(true);
-});
 
 /* =====================================================================
    MAGNETIC BUTTONS
@@ -2136,10 +2231,6 @@ $('#dNext').addEventListener('click', ()=>{
   });
   gsap.utils.toArray('.service-row').forEach(el=>{
     gsap.from(el, { opacity:0, y:30, duration:.8, ease:'power2.out',
-      scrollTrigger:{ trigger:el, start:'top 92%' } });
-  });
-  gsap.utils.toArray('.tl-row').forEach(el=>{
-    gsap.from(el, { opacity:0, y:24, duration:.7, ease:'power2.out',
       scrollTrigger:{ trigger:el, start:'top 92%' } });
   });
 })();

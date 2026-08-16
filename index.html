@@ -185,19 +185,161 @@ section{ position:relative; }
   #nav .menu-btn{ display:block; }
 }
 
+
+/* ============================================================
+   MOBILE MENU — REAL BACKDROP BLUR
+   The backdrop is a separate fixed layer behind the menu.
+   This makes the content/video behind WORK, ABOUT, SERVICES
+   and CONTACT visibly blurred on mobile.
+   ============================================================ */
+
+#mobileMenuBackdrop{
+  position:fixed;
+  inset:0;
+  z-index:490;
+  display:none;
+  background:rgba(8,8,10,.28);
+  backdrop-filter:blur(22px) saturate(.72);
+  -webkit-backdrop-filter:blur(22px) saturate(.72);
+  pointer-events:auto;
+}
+
+#mobileMenuBackdrop.active{
+  display:block;
+}
+
+@media (max-width:760px){
+
+  #nav.mobile-open{
+    z-index:700;
+    mix-blend-mode:normal;
+  }
+
+  #nav.mobile-open nav{
+    display:flex !important;
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100svh;
+    z-index:701;
+
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:28px;
+
+    background:transparent;
+    mix-blend-mode:normal;
+  }
+
+  #nav.mobile-open nav a{
+    position:relative;
+    z-index:702;
+    font-size:20px !important;
+    color:var(--text);
+  }
+
+  #nav.mobile-open nav a::after{
+    background:var(--accent);
+  }
+
+  #nav.mobile-open .menu-btn{
+    position:relative;
+    z-index:703;
+  }
+}
+
+/* Extra fallback for browsers where backdrop-filter is disabled */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  #mobileMenuBackdrop.active{
+    background:rgba(8,8,10,.82);
+  }
+}
+
 /* ============================= HERO ============================= */
-#hero{ position:relative; min-height:100svh; display:flex; flex-direction:column; justify-content:flex-end; overflow:hidden; padding-bottom:56px; }
+#hero{
+  position:relative;
+  min-height:100svh;
+  height:100svh;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  overflow:hidden;
+  padding-bottom:clamp(32px,5vw,56px);
+  isolation:isolate;
+}
+
 #hero-background-video{
   position:absolute;
   inset:0;
   z-index:1;
   width:100%;
   height:100%;
-  object-fit:cover;
-  object-position:center;
-  opacity:.85;
-  pointer-events:none;
+  min-width:100%;
+  min-height:100%;
   display:block;
+  pointer-events:none;
+  object-fit:cover;
+  object-position:center center;
+  opacity:.85;
+  background:var(--bg);
+  transform:translateZ(0);
+  backface-visibility:hidden;
+}
+
+/* Tablet */
+@media (max-width:1024px){
+  #hero{
+    min-height:100svh;
+    height:100svh;
+  }
+
+  #hero-background-video{
+    object-fit:cover;
+    object-position:center center;
+  }
+}
+
+/* Mobile portrait — keep the complete logo/video visible */
+@media (max-width:760px){
+  #hero{
+    min-height:100svh;
+    height:100svh;
+    padding-bottom:clamp(28px,7vh,48px);
+  }
+
+  #hero-background-video{
+    width:100%;
+    height:100%;
+    min-width:100%;
+    min-height:100%;
+    object-fit:contain;
+    object-position:center center;
+    background:var(--bg);
+    opacity:.85;
+  }
+}
+
+/* Small phones */
+@media (max-width:480px){
+  #hero{
+    min-height:100svh;
+    height:100svh;
+    padding-bottom:28px;
+  }
+
+  #hero-background-video{
+    object-fit:contain;
+    object-position:center center;
+  }
+}
+
+/* Landscape mobile */
+@media (max-width:760px) and (orientation:landscape){
+  #hero-background-video{
+    object-fit:cover;
+    object-position:center center;
+  }
 }
 
 /* ============================= HERO VIDEO BACKGROUND ============================= */
@@ -1145,6 +1287,8 @@ html {
   <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
   <div class="pct mono" id="pctText">LOADING 000%</div>
 </div>
+
+<div id="mobileMenuBackdrop"></div>
 
 <header id="nav">
   <div class="logo">VISION<b>X</b>VISUALSS</div>
@@ -2313,13 +2457,75 @@ $('#dClose').addEventListener('click', closeDetail);
   });
 })();
 
-/* mobile menu toggle (simple) */
-$('.menu-btn').addEventListener('click', ()=>{
+/* ============================================================
+   MOBILE MENU — OPEN / BLUR / CLOSE
+   ============================================================ */
+
+(function mobileMenu(){
+  const menuBtn = $('.menu-btn');
+  const navBar = $('#nav');
   const nav = $('#nav nav');
-  const open = nav.style.display === 'flex';
-  nav.style.cssText = open ? '' : 'display:flex; position:fixed; inset:0; background:var(--bg); flex-direction:column; align-items:center; justify-content:center; gap:28px; z-index:600; mix-blend-mode:normal;';
-  nav.querySelectorAll('a').forEach(a=> a.style.fontSize = open ? '' : '20px');
-});
+  const backdrop = $('#mobileMenuBackdrop');
+
+  if(!menuBtn || !navBar || !nav || !backdrop) return;
+
+  let menuOpen = false;
+
+  function openMenu(){
+    menuOpen = true;
+
+    /* Put the menu above the blur layer */
+    navBar.classList.add('mobile-open');
+    backdrop.classList.add('active');
+
+    /* Lock the page underneath */
+    document.body.style.overflow = 'hidden';
+
+    menuBtn.textContent = 'CLOSE';
+  }
+
+  function closeMenu(){
+    menuOpen = false;
+
+    /* Remove menu and blur completely */
+    navBar.classList.remove('mobile-open');
+    backdrop.classList.remove('active');
+
+    /* Restore scrolling */
+    document.body.style.overflow = '';
+
+    menuBtn.textContent = 'MENU';
+  }
+
+  menuBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    menuOpen ? closeMenu() : openMenu();
+  });
+
+  /* Clicking WORK / ABOUT / SERVICES / CONTACT closes the menu */
+  nav.querySelectorAll('a').forEach(link=>{
+    link.addEventListener('click', function(){
+      closeMenu();
+    });
+  });
+
+  /* Clicking the blurred area also closes the menu */
+  backdrop.addEventListener('click', closeMenu);
+
+  /* Escape closes it */
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && menuOpen){
+      closeMenu();
+    }
+  });
+
+  /* Never leave the mobile menu open when switching to desktop */
+  window.addEventListener('resize', function(){
+    if(window.innerWidth > 760 && menuOpen){
+      closeMenu();
+    }
+  });
+})();
 </script>
 </body>
 </html>

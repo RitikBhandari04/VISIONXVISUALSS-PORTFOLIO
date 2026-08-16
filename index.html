@@ -610,9 +610,223 @@ a:focus-visible, button:focus-visible{ outline:1px solid var(--accent); outline-
 @media (prefers-reduced-motion: reduce){
   *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
 }
+/* ============================================================
+   PROFESSIONAL PROJECT VIDEO PLAYER
+   ============================================================ */
+
+#detail .d-frame{
+  margin:0 clamp(20px,5vw,64px);
+  aspect-ratio:16/9;
+  border-radius:6px;
+  overflow:hidden;
+  position:relative;
+  background:#050505;
+  box-shadow:0 30px 80px rgba(0,0,0,.45);
+}
+
+.detail-video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:#050505;
+}
+
+.video-overlay{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.15) 0%,
+      transparent 45%,
+      rgba(0,0,0,.7) 100%
+    );
+  z-index:2;
+}
+
+.video-center-play{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:78px;
+  height:78px;
+  border:1px solid rgba(255,255,255,.55);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(10px);
+  background:rgba(0,0,0,.25);
+  z-index:5;
+  cursor:pointer;
+  transition:
+    transform .35s var(--ease),
+    opacity .35s var(--ease),
+    background .35s var(--ease);
+}
+
+.video-center-play span{
+  font-size:22px;
+  margin-left:4px;
+}
+
+.video-center-play:hover{
+  transform:translate(-50%,-50%) scale(1.08);
+  background:var(--accent);
+  color:#08080a;
+}
+
+.video-controls{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:18px 20px 16px;
+  z-index:10;
+  opacity:0;
+  transform:translateY(10px);
+  transition:
+    opacity .3s ease,
+    transform .3s ease;
+}
+
+#dVideoFrame:hover .video-controls,
+#dVideoFrame.paused .video-controls{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.video-progress-wrap{
+  width:100%;
+  margin-bottom:12px;
+}
+
+#videoProgress{
+  width:100%;
+  height:3px;
+  appearance:none;
+  -webkit-appearance:none;
+  background:rgba(255,255,255,.25);
+  border-radius:999px;
+  cursor:pointer;
+}
+
+#videoProgress::-webkit-slider-thumb{
+  appearance:none;
+  -webkit-appearance:none;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--accent);
+  cursor:pointer;
+}
+
+#videoProgress::-moz-range-thumb{
+  width:12px;
+  height:12px;
+  border:0;
+  border-radius:50%;
+  background:var(--accent);
+  cursor:pointer;
+}
+
+.video-control-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.video-left-controls,
+.video-right-controls{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.video-btn{
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:14px;
+  border-radius:50%;
+  transition:
+    background .25s ease,
+    color .25s ease;
+}
+
+.video-btn:hover{
+  background:rgba(255,255,255,.12);
+  color:var(--accent);
+}
+
+.volume-slider{
+  width:80px;
+  height:3px;
+  appearance:none;
+  -webkit-appearance:none;
+  background:rgba(255,255,255,.3);
+  cursor:pointer;
+}
+
+.volume-slider::-webkit-slider-thumb{
+  appearance:none;
+  -webkit-appearance:none;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#fff;
+}
+
+.video-time{
+  font-family:var(--f-mono);
+  font-size:10px;
+  letter-spacing:.08em;
+  color:rgba(255,255,255,.8);
+  margin-left:4px;
+}
+
+.speed-btn{
+  width:auto;
+  padding:0 10px;
+  border-radius:5px;
+  font-family:var(--f-mono);
+  font-size:10px;
+}
+
+@media(max-width:760px){
+
+  .video-controls{
+    padding:12px;
+  }
+
+  .volume-slider{
+    width:55px;
+  }
+
+  .video-time{
+    font-size:9px;
+  }
+
+  .video-center-play{
+    width:62px;
+    height:62px;
+  }
+
+  .video-right-controls{
+    gap:2px;
+  }
+}
 html {
     scroll-behavior: smooth;
-
+}
 </style>
 </head>
 <body>
@@ -871,7 +1085,83 @@ html {
       <div><div class="k">ROLE</div><div class="v" id="dRole">—</div></div>
     </div>
   </div>
-  <div class="d-frame"><div class="footage" id="dFootage" style="position:absolute;inset:0;"></div></div>
+  <div class="d-frame" id="dVideoFrame">
+
+  <video
+    id="dVideo"
+    class="detail-video"
+    preload="metadata"
+    playsinline>
+  </video>
+
+  <div class="video-overlay"></div>
+
+  <div class="video-center-play" id="videoCenterPlay">
+    <span>▶</span>
+  </div>
+
+  <div class="video-controls">
+
+    <div class="video-progress-wrap">
+      <input
+        type="range"
+        id="videoProgress"
+        min="0"
+        max="100"
+        value="0"
+        step="0.1">
+    </div>
+
+    <div class="video-control-row">
+
+      <div class="video-left-controls">
+
+        <button id="videoPlay" class="video-btn" title="Play / Pause">
+          ▶
+        </button>
+
+        <button id="videoMute" class="video-btn" title="Mute">
+          🔊
+        </button>
+
+        <input
+          type="range"
+          id="videoVolume"
+          class="volume-slider"
+          min="0"
+          max="1"
+          value="1"
+          step="0.05">
+
+        <span class="video-time">
+          <span id="videoCurrent">00:00</span>
+          /
+          <span id="videoDuration">00:00</span>
+        </span>
+
+      </div>
+
+      <div class="video-right-controls">
+
+        <button id="videoSpeed" class="video-btn speed-btn" title="Playback Speed">
+          1×
+        </button>
+
+        <button id="videoPiP" class="video-btn" title="Picture in Picture">
+          ▣
+        </button>
+
+        <button id="videoFullscreen" class="video-btn" title="Fullscreen">
+          ⛶
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
   <div class="d-body">
     <h3>THE PROJECT</h3>
     <p id="dDesc">Description.</p>
@@ -1408,7 +1698,7 @@ function initHeroReveal(){
   const el = $('#hscroll');
 
   el.innerHTML = PHENIX_DATA.more.map(m=>`
-    <div class="hcard" data-cursor="view" data-label="VIEW →">
+    <div class="hcard"  data-label="VIEW →">
 
       <video
   class="more-video"
@@ -1453,51 +1743,331 @@ function initHeroReveal(){
 })();
 
 /* =====================================================================
-   PROJECT DETAIL OVERLAY
+   PROJECT DETAIL OVERLAY + VIDEO PLAYER
    ===================================================================== */
 let currentIdx = 0;
+
+function formatVideoTime(seconds){
+  if(!Number.isFinite(seconds)) return '00:00';
+
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+
+  return `${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+}
+
+function updateDetailPlayUI(){
+  const video = $('#dVideo');
+  const frame = $('#dVideoFrame');
+  const center = $('#videoCenterPlay');
+  const play = $('#videoPlay');
+
+  if(!video || !frame) return;
+
+  if(video.paused){
+    frame.classList.add('paused');
+    if(play) play.textContent = '▶';
+    if(center) center.style.opacity = '1';
+  }else{
+    frame.classList.remove('paused');
+    if(play) play.textContent = 'Ⅱ';
+    if(center) center.style.opacity = '0';
+  }
+}
+
+function loadProjectVideo(project, autoplay=false){
+  const video = $('#dVideo');
+
+  if(!video) return;
+
+  video.pause();
+
+  // Remove old source completely before loading the next project.
+  video.removeAttribute('src');
+  video.load();
+
+  video.src = project.video;
+  video.currentTime = 0;
+  video.volume = 1;
+  video.muted = false;
+  video.playbackRate = 1;
+
+  $('#videoVolume').value = 1;
+  $('#videoProgress').value = 0;
+  $('#videoCurrent').textContent = '00:00';
+  $('#videoDuration').textContent = '00:00';
+  $('#videoPlay').textContent = '▶';
+  $('#videoMute').textContent = '🔊';
+  $('#videoSpeed').textContent = '1×';
+
+  $('#dVideoFrame').classList.add('paused');
+
+  const onMetadata = () => {
+    $('#videoDuration').textContent =
+      formatVideoTime(video.duration);
+
+    if(autoplay){
+      video.play().then(()=>{
+        updateDetailPlayUI();
+      }).catch(()=>{
+        // Browsers may block audible autoplay.
+        // The project was clicked by the user, so the
+        // center play button remains available.
+        updateDetailPlayUI();
+      });
+    }
+  };
+
+  video.addEventListener('loadedmetadata', onMetadata, {once:true});
+  video.load();
+}
+
 function openDetail(id){
   const projects = PHENIX_DATA.projects;
-  const idx = projects.findIndex(p=>p.id===id);
+  const idx = projects.findIndex(p => p.id === id);
+
   currentIdx = idx < 0 ? 0 : idx;
-  renderDetail();
+
+  renderDetail(true);
+
   $('#detail').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.body.style.overflow = 'hidden';
 }
+
 function closeDetail(){
+  const video = $('#dVideo');
+
+  if(video){
+    video.pause();
+    video.currentTime = 0;
+  }
+
   $('#detail').classList.remove('open');
-  document.body.style.overflow='';
+  document.body.style.overflow = '';
 }
-function renderDetail(){
+
+function renderDetail(autoplay=false){
+
   const p = PHENIX_DATA.projects[currentIdx];
+
   $('#dTitle').textContent = p.title;
   $('#dClient').textContent = p.client;
   $('#dYear').textContent = p.year;
   $('#dRole').textContent = p.role;
   $('#dDesc').textContent = p.desc;
-  $('#dFootage').style.background = p.grad;
 
-  $('#dTabs').innerHTML = PHENIX_DATA.detailTabs.map((t,i)=>`<button data-i="${i}" class="${i===0?'on':''}">${t}</button>`).join('');
-  $('#dPanels').innerHTML = PHENIX_DATA.detailTabs.map((t,i)=>`
-    <div class="d-panel ${i===0?'on':''}" data-i="${i}"><div class="footage" style="position:absolute;inset:0;background-image:${p.grad};"></div></div>
-  `).join('');
+  loadProjectVideo(p, autoplay);
+
+  // Keep the existing tabs, but make Final Edit the
+  // actual project video. Other tabs remain ready for
+  // future assets.
+  $('#dTabs').innerHTML =
+    PHENIX_DATA.detailTabs.map((tab,i)=>`
+      <button
+        type="button"
+        data-i="${i}"
+        class="${i === 0 ? 'on' : ''}">
+        ${tab}
+      </button>
+    `).join('');
+
+  $('#dPanels').innerHTML = '';
 
   $$('#dTabs button').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      $$('#dTabs button').forEach(b=>b.classList.remove('on'));
-      $$('.d-panel').forEach(pn=>pn.classList.remove('on'));
+
+      $$('#dTabs button').forEach(b=>{
+        b.classList.remove('on');
+      });
+
       btn.classList.add('on');
-      $(`.d-panel[data-i="${btn.dataset.i}"]`).classList.add('on');
+
+      const tab =
+        PHENIX_DATA.detailTabs[Number(btn.dataset.i)];
+
+      if(tab === 'Final Edit'){
+        loadProjectVideo(PHENIX_DATA.projects[currentIdx], true);
+      }
+
     });
   });
 
   $('#detail').scrollTo(0,0);
 }
+
+/* ============================================================
+   PROJECT VIDEO PLAYER CONTROLS
+   ============================================================ */
+(function projectVideoPlayer(){
+
+  const video = $('#dVideo');
+
+  if(!video) return;
+
+  const frame = $('#dVideoFrame');
+  const playBtn = $('#videoPlay');
+  const muteBtn = $('#videoMute');
+  const volume = $('#videoVolume');
+  const progress = $('#videoProgress');
+  const current = $('#videoCurrent');
+  const duration = $('#videoDuration');
+  const speedBtn = $('#videoSpeed');
+  const pipBtn = $('#videoPiP');
+  const fullscreenBtn = $('#videoFullscreen');
+  const centerPlay = $('#videoCenterPlay');
+
+  function togglePlay(){
+    if(video.paused){
+      video.play().catch(()=>{});
+    }else{
+      video.pause();
+    }
+  }
+
+  playBtn.addEventListener('click', togglePlay);
+  centerPlay.addEventListener('click', togglePlay);
+
+  video.addEventListener('click', e=>{
+    if(e.target === video){
+      togglePlay();
+    }
+  });
+
+  video.addEventListener('play', updateDetailPlayUI);
+  video.addEventListener('pause', updateDetailPlayUI);
+
+  video.addEventListener('loadedmetadata', ()=>{
+    duration.textContent = formatVideoTime(video.duration);
+  });
+
+  video.addEventListener('timeupdate', ()=>{
+    current.textContent = formatVideoTime(video.currentTime);
+
+    if(video.duration){
+      progress.value =
+        (video.currentTime / video.duration) * 100;
+    }
+  });
+
+  progress.addEventListener('input', ()=>{
+    if(video.duration){
+      video.currentTime =
+        (Number(progress.value) / 100) * video.duration;
+    }
+  });
+
+  muteBtn.addEventListener('click', ()=>{
+    video.muted = !video.muted;
+    muteBtn.textContent = video.muted ? '🔇' : '🔊';
+  });
+
+  volume.addEventListener('input', ()=>{
+    video.volume = Number(volume.value);
+
+    if(video.volume <= 0){
+      video.muted = true;
+      muteBtn.textContent = '🔇';
+    }else{
+      video.muted = false;
+      muteBtn.textContent = '🔊';
+    }
+  });
+
+  const speeds = [1, 1.25, 1.5, 2, .75];
+  let speedIndex = 0;
+
+  speedBtn.addEventListener('click', ()=>{
+    speedIndex = (speedIndex + 1) % speeds.length;
+
+    video.playbackRate = speeds[speedIndex];
+    speedBtn.textContent = `${speeds[speedIndex]}×`;
+  });
+
+  pipBtn.addEventListener('click', async ()=>{
+    try{
+      if(document.pictureInPictureElement){
+        await document.exitPictureInPicture();
+      }else if(
+        document.pictureInPictureEnabled &&
+        !video.disablePictureInPicture
+      ){
+        await video.requestPictureInPicture();
+      }
+    }catch(err){
+      console.warn('Picture-in-picture unavailable:', err);
+    }
+  });
+
+  fullscreenBtn.addEventListener('click', async ()=>{
+    try{
+      if(document.fullscreenElement){
+        await document.exitFullscreen();
+      }else{
+        await frame.requestFullscreen();
+      }
+    }catch(err){
+      console.warn('Fullscreen unavailable:', err);
+    }
+  });
+
+  video.addEventListener('ended', ()=>{
+    video.currentTime = 0;
+    video.pause();
+    updateDetailPlayUI();
+  });
+
+  document.addEventListener('keydown', e=>{
+
+    if(!$('#detail').classList.contains('open')) return;
+
+    const activeTag = document.activeElement?.tagName;
+
+    if(activeTag === 'INPUT' || activeTag === 'BUTTON') return;
+
+    switch(e.key.toLowerCase()){
+
+      case ' ':
+        e.preventDefault();
+        togglePlay();
+        break;
+
+      case 'arrowleft':
+        e.preventDefault();
+        video.currentTime =
+          Math.max(0, video.currentTime - 5);
+        break;
+
+      case 'arrowright':
+        e.preventDefault();
+        video.currentTime =
+          Math.min(
+            video.duration || Infinity,
+            video.currentTime + 5
+          );
+        break;
+
+      case 'm':
+        video.muted = !video.muted;
+        muteBtn.textContent =
+          video.muted ? '🔇' : '🔊';
+        break;
+
+      case 'f':
+        fullscreenBtn.click();
+        break;
+    }
+  });
+
+})();
+
 $('#dClose').addEventListener('click', closeDetail);
 $('#dBack').addEventListener('click', closeDetail);
+
 $('#dNext').addEventListener('click', ()=>{
-  currentIdx = (currentIdx+1) % PHENIX_DATA.projects.length;
-  renderDetail();
+  currentIdx =
+    (currentIdx + 1) % PHENIX_DATA.projects.length;
+
+  renderDetail(true);
 });
 
 /* =====================================================================
@@ -1545,7 +2115,7 @@ $('#dNext').addEventListener('click', ()=>{
 })();
 
 /* mobile menu toggle (simple) */
-$('.menu-btn').addEventListener('click', ()=>{W
+$('.menu-btn').addEventListener('click', ()=>{
   const nav = $('#nav nav');
   const open = nav.style.display === 'flex';
   nav.style.cssText = open ? '' : 'display:flex; position:fixed; inset:0; background:var(--bg); flex-direction:column; align-items:center; justify-content:center; gap:28px; z-index:600; mix-blend-mode:normal;';

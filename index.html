@@ -187,8 +187,34 @@ section{ position:relative; }
 
 /* ============================= HERO ============================= */
 #hero{ position:relative; min-height:100svh; display:flex; flex-direction:column; justify-content:flex-end; overflow:hidden; padding-bottom:56px; }
-#hero-canvas{ position:absolute; inset:0; z-index:1; opacity:.85; }
-#hero-canvas canvas{ display:block; width:100%!important; height:100%!important; }
+#hero-background-video{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  opacity:.85;
+  pointer-events:none;
+  display:block;
+}
+
+/* ============================= HERO VIDEO BACKGROUND ============================= */
+#hero::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8,8,10,.22) 0%,
+      rgba(8,8,10,.32) 48%,
+      rgba(8,8,10,.88) 100%
+    );
+}
 #hero::before{
   content:''; position:absolute; inset:0; z-index:2; pointer-events:none;
   background:linear-gradient(180deg, rgba(8,8,10,.15) 0%, rgba(8,8,10,.35) 55%, var(--bg) 96%);
@@ -1133,7 +1159,17 @@ html {
 
 <!-- ============================= HERO ============================= -->
 <section id="hero">
-  <div id="hero-canvas"></div>
+  <video
+    id="hero-background-video"
+    class="hero-background-video"
+    src="assets/videos/background.mp4"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+    aria-hidden="true">
+  </video>
   <div class="hero-inner">
     <div class="kicker eyebrow" style="text-align:center;">LOKESH — CREATIVE VIDEO EDITOR</div>
     <div class="title-block">
@@ -1508,6 +1544,30 @@ const $$ = (s,ctx=document)=>Array.from(ctx.querySelectorAll(s));
 const isTouch = window.matchMedia('(hover:none) and (pointer:coarse)').matches || window.innerWidth < 860;
 gsap.registerPlugin(ScrollTrigger);
 
+
+/* =====================================================================
+   HERO BACKGROUND VIDEO
+   ===================================================================== */
+(function heroBackgroundVideo(){
+  const video = document.getElementById('hero-background-video');
+  if(!video) return;
+
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+
+  const start = () => {
+    const promise = video.play();
+    if(promise && promise.catch) promise.catch(() => {});
+  };
+
+  start();
+  video.addEventListener('loadeddata', start, { once:true });
+  document.addEventListener('visibilitychange', () => {
+    if(!document.hidden) start();
+  });
+})();
+
 /* =====================================================================
    LOADER
    ===================================================================== */
@@ -1615,70 +1675,6 @@ function initHeroReveal(){
       duration: .6 
     }, '-=.3'); 
 }
-
-(function heroScene(){
-  const mount = $('#hero-canvas');
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, mount.clientWidth/mount.clientHeight, .1, 100);
-  camera.position.set(0,0,9);
-  const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));
-  renderer.setSize(mount.clientWidth, mount.clientHeight);
-  mount.appendChild(renderer.domElement);
-
-  const group = new THREE.Group();
-  scene.add(group);
-
-  const chromeMat = new THREE.MeshStandardMaterial({ color:0xcfd2d6, metalness:1, roughness:.18, envMapIntensity:1 });
-  const emberMat = new THREE.MeshStandardMaterial({ color:0xff5a2d, metalness:.4, roughness:.35, emissive:0xff5a2d, emissiveIntensity:.35 });
-
-  const shapes = [];
-  const geo = new THREE.IcosahedronGeometry(1, 0);
-  for(let i=0;i<7;i++){
-    const mat = i % 3 === 0 ? emberMat : chromeMat;
-    const mesh = new THREE.Mesh(geo, mat);
-    const s = THREE.MathUtils.randFloat(.35,1.1);
-    mesh.scale.setScalar(s);
-    mesh.position.set(THREE.MathUtils.randFloatSpread(9), THREE.MathUtils.randFloatSpread(5), THREE.MathUtils.randFloatSpread(4)-1);
-    mesh.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, 0);
-    group.add(mesh);
-    shapes.push({ mesh, spin: THREE.MathUtils.randFloat(.05,.25)*(Math.random()>.5?1:-1) });
-  }
-
-  scene.add(new THREE.AmbientLight(0xffffff, .5));
-  const key = new THREE.DirectionalLight(0xffffff, 1.1); key.position.set(4,5,6); scene.add(key);
-  const rim = new THREE.DirectionalLight(0xff5a2d, .8); rim.position.set(-5,-3,-4); scene.add(rim);
-
-  let mx=0,my=0;
-  window.addEventListener('mousemove', e=>{
-    mx = (e.clientX/innerWidth - .5); my = (e.clientY/innerHeight - .5);
-  });
-
-  let visible = true;
-  new IntersectionObserver(([entry])=>{ visible = entry.isIntersecting; }, { threshold:0 }).observe(mount);
-
-  function animate(){
-    requestAnimationFrame(animate);
-    if(!visible) return;
-    shapes.forEach(s=>{ s.mesh.rotation.x += s.spin*.006; s.mesh.rotation.y += s.spin*.008; });
-    group.rotation.y += ( mx*.6 - group.rotation.y ) * .04;
-    group.rotation.x += ( -my*.3 - group.rotation.x ) * .04;
-    camera.position.x += ( mx*1.2 - camera.position.x ) * .03;
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  window.addEventListener('resize', ()=>{
-    camera.aspect = mount.clientWidth/mount.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(mount.clientWidth, mount.clientHeight);
-  });
-
-  ScrollTrigger.create({
-    trigger: '#hero', start:'top top', end:'bottom top',
-    onUpdate: self => { group.position.y = self.progress * -1.5; }
-  });
-})();
 
 /* =====================================================================
    INTERMISSION 3D

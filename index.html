@@ -1675,6 +1675,11 @@ html {
   -webkit-backdrop-filter:blur(12px);
 }
 
+/* Showreel uses the same cinematic player, but it is a standalone video. */
+#detail.showreel-open .detail-nav{
+  display:none !important;
+}
+
 
 /* ============================================================
    FIX — KEEP WORK TITLE / TYPE / SERIAL BELOW THE VIDEO
@@ -1817,7 +1822,7 @@ html {
       <span>VIDEO EDITOR</span><span>VISUAL STORYTELLER</span>
     </div>
     <div class="cta-row">
-      <a href="#showreel" class="magnetic-btn" data-cursor="open"><span class="fill"></span>WATCH SHOWREEL →</a>
+      <a href="#showreel" id="watchShowreelBtn" class="magnetic-btn" data-cursor="open"><span class="fill"></span>WATCH SHOWREEL →</a>
     </div>
     <div class="scroll-cue">
       <span class="mono" style="font-size:10px; color:var(--text-dim);">SCROLL TO EXPLORE</span>
@@ -1883,7 +1888,7 @@ html {
       <div class="head-title fx-up">SELECTED<br>SHOWREEL</div>
       <div class="head-sub fx-up">A one-minute cut of the frames, transitions and finishes VISIONXVISUALSS is known for.</div>
     </div>
-<div class="reel-frame fx-scale"  data-label="WATCH REEL">
+<div class="reel-frame fx-scale" id="showreelFrame" data-cursor="view" data-label="VIEW SHOWREEL →">
   
   <video
     class="showreel-video"
@@ -2964,6 +2969,65 @@ function loadMoreVideo(item){
   video.load();
 }
 
+function loadShowreelVideo(autoplay=true){
+  const video = $('#dVideo');
+  if(!video) return;
+
+  video.pause();
+  video.removeAttribute('src');
+  video.load();
+
+  const showreelSrc = 'assets/videos/v5.mp4';
+
+  video.src = showreelSrc;
+  syncDetailVideoBackground(showreelSrc);
+  video.currentTime = 0;
+  video.volume = 1;
+  video.muted = false;
+  video.playbackRate = 1;
+
+  $('#videoVolume').value = 1;
+  $('#videoProgress').value = 0;
+  $('#videoCurrent').textContent = '00:00';
+  $('#videoDuration').textContent = '00:00';
+  $('#videoPlay').textContent = '▶';
+  $('#videoMute').textContent = '🔊';
+  $('#videoSpeed').textContent = '1×';
+  $('#dVideoFrame').classList.add('paused');
+
+  const onMetadata = () => {
+    $('#videoDuration').textContent = formatVideoTime(video.duration);
+
+    if(autoplay){
+      video.play().then(()=>{
+        updateDetailPlayUI();
+      }).catch(()=>{
+        updateDetailPlayUI();
+      });
+    }
+  };
+
+  video.addEventListener('loadedmetadata', onMetadata, {once:true});
+  video.load();
+}
+
+function openShowreel(){
+  currentDetailType = 'showreel';
+  currentDetailIdx = 0;
+
+  const title = $('#detailWorkTitle');
+  const count = $('#detailWorkCount');
+
+  if(title) title.textContent = 'SHOWREEL / 2026';
+  if(count) count.textContent = 'SHOWREEL';
+
+  loadShowreelVideo(true);
+
+  $('#detail').classList.add('open', 'showreel-open');
+  document.body.style.overflow = 'hidden';
+  $('#detail').scrollTo(0,0);
+}
+
 function openDetail(id){
   const projects = PHENIX_DATA.projects;
   const idx = projects.findIndex(p => p.id === id);
@@ -2984,6 +3048,12 @@ function updateDetailWorkCount(){
   const countEl = $('#detailWorkCount');
   if(!countEl) return;
 
+  if(currentDetailType === 'showreel'){
+    if(titleEl) titleEl.textContent = 'SHOWREEL / 2026';
+    countEl.textContent = 'SHOWREEL';
+    return;
+  }
+
   const isMore = currentDetailType === 'more';
   const items = isMore ? PHENIX_DATA.more : PHENIX_DATA.projects;
   const total = items.length || 0;
@@ -3003,6 +3073,12 @@ function updateDetailWorkCount(){
 
 function renderCurrentDetail(autoplay=true){
   updateDetailWorkCount();
+
+  if(currentDetailType==='showreel'){
+    loadShowreelVideo(autoplay);
+    return;
+  }
+
   if(currentDetailType==='more'){
     const items=PHENIX_DATA.more;
     const item=items[currentDetailIdx];
@@ -3015,6 +3091,8 @@ function renderCurrentDetail(autoplay=true){
 }
 
 function moveDetail(delta){
+  if(currentDetailType==='showreel') return;
+
   const items = currentDetailType==='more' ? PHENIX_DATA.more : PHENIX_DATA.projects;
   if(!items.length) return;
   currentDetailIdx = (currentDetailIdx + delta + items.length) % items.length;
@@ -3030,7 +3108,7 @@ function closeDetail(){
     video.currentTime = 0;
   }
 
-  $('#detail').classList.remove('open');
+  $('#detail').classList.remove('open', 'showreel-open');
   document.body.style.overflow = '';
 }
 
@@ -3256,6 +3334,29 @@ function renderDetail(autoplay=false){
 })();
 
 $('#dClose').addEventListener('click', closeDetail);
+
+/* =====================================================================
+   SHOWREEL VIEWER
+   Opens the same professional video player used for projects.
+   ===================================================================== */
+(function showreelViewer(){
+  const btn = $('#watchShowreelBtn');
+  const frame = $('#showreelFrame');
+
+  if(btn){
+    btn.addEventListener('click', e=>{
+      e.preventDefault();
+      openShowreel();
+    });
+  }
+
+  if(frame){
+    frame.addEventListener('click', e=>{
+      e.preventDefault();
+      openShowreel();
+    });
+  }
+})();
 
 /* =====================================================================
    MAGNETIC BUTTONS

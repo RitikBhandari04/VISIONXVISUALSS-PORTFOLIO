@@ -600,6 +600,152 @@ section{ position:relative; }
 }
 .project-card:hover .view-link{ opacity:1; transform:translateY(0); }
 
+/* ============================= THUMBNAILS / COVERS ============================= */
+#covers{
+  border-top:1px solid var(--line);
+  overflow:hidden;
+}
+
+.covers-grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:18px;
+}
+
+.cover-card{
+  position:relative;
+  grid-column:span 4;
+  aspect-ratio:16/10;
+  overflow:hidden;
+  border-radius:5px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  cursor:none;
+  isolation:isolate;
+}
+
+.cover-card:nth-child(1){ grid-column:span 7; }
+.cover-card:nth-child(2){ grid-column:span 5; }
+.cover-card:nth-child(3){ grid-column:span 5; }
+.cover-card:nth-child(4){ grid-column:span 7; }
+.cover-card:nth-child(5){ grid-column:span 4; }
+.cover-card:nth-child(6){ grid-column:span 8; }
+
+.cover-card img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform 1s var(--ease), filter .6s var(--ease);
+}
+
+.cover-card::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.82) 100%);
+  opacity:.72;
+  transition:opacity .45s var(--ease);
+  z-index:1;
+  pointer-events:none;
+}
+
+.cover-card:hover img{
+  transform:scale(1.055);
+  filter:saturate(1.05);
+}
+
+.cover-card:hover::after{ opacity:.92; }
+
+.cover-number{
+  position:absolute;
+  top:18px;
+  left:18px;
+  z-index:2;
+  font-family:var(--f-mono);
+  font-size:10px;
+  letter-spacing:.12em;
+  color:rgba(255,255,255,.72);
+}
+
+.cover-info{
+  position:absolute;
+  left:20px;
+  right:20px;
+  bottom:18px;
+  z-index:2;
+  transform:translateY(8px);
+  transition:transform .45s var(--ease);
+}
+
+.cover-card:hover .cover-info{ transform:translateY(0); }
+
+.cover-info h3{
+  font-family:var(--f-head);
+  font-weight:600;
+  font-size:clamp(18px,2vw,28px);
+  line-height:1.05;
+}
+
+.cover-info .cover-type{
+  margin-top:6px;
+  font-family:var(--f-mono);
+  font-size:10px;
+  letter-spacing:.11em;
+  color:var(--text-dim);
+}
+
+.cover-view{
+  margin-top:12px;
+  font-family:var(--f-mono);
+  font-size:10px;
+  letter-spacing:.12em;
+  color:var(--accent);
+  opacity:0;
+  transform:translateY(5px);
+  transition:all .35s var(--ease);
+}
+
+.cover-card:hover .cover-view{
+  opacity:1;
+  transform:translateY(0);
+}
+
+@media(max-width:900px){
+  .cover-card,
+  .cover-card:nth-child(n){
+    grid-column:span 6;
+  }
+
+  .cover-card:nth-child(1),
+  .cover-card:nth-child(4),
+  .cover-card:nth-child(6){
+    grid-column:span 12;
+  }
+}
+
+@media(max-width:600px){
+  .covers-grid{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  .cover-card,
+  .cover-card:nth-child(n){
+    grid-column:span 1;
+    aspect-ratio:16/10;
+  }
+
+  .cover-card:nth-child(1),
+  .cover-card:nth-child(4),
+  .cover-card:nth-child(6){
+    aspect-ratio:16/10;
+  }
+
+  .cover-info{ left:16px; right:16px; bottom:16px; }
+}
+
 /* ============================= SERVICES ============================= */
 
 #services{
@@ -1028,6 +1174,51 @@ footer .fsocial{ display:flex; gap:20px; font-family:var(--f-mono); font-size:11
 footer .fsocial a:hover{ color:var(--accent); }
 footer .fbottom{ margin-top:26px; padding-top:20px; border-top:1px solid var(--line); font-family:var(--f-mono); font-size:10px; color:var(--text-faint); letter-spacing:.08em; }
 
+/* ============================= COVER VIEWER ============================= */
+#coverViewer{
+  position:fixed; inset:0; z-index:3000;
+  display:flex; align-items:center; justify-content:center;
+  padding:40px;
+  background:rgba(5,5,7,.84);
+  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .35s var(--ease), visibility .35s var(--ease);
+}
+#coverViewer.open{ opacity:1; visibility:visible; pointer-events:auto; }
+.cover-viewer-inner{ position:relative; max-width:min(1100px,86vw); max-height:90vh; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+#coverViewerImage{ display:block; max-width:82vw; max-height:78vh; width:auto; height:auto; object-fit:contain; border-radius:6px; box-shadow:0 30px 100px rgba(0,0,0,.65); transform:scale(.94); transition:transform .45s var(--ease); }
+#coverViewer.open #coverViewerImage{ transform:scale(1); }
+#coverViewerTitle{ margin-top:18px; font-family:var(--f-head); font-size:22px; font-weight:600; }
+#coverViewerType{ margin-top:6px; font-family:var(--f-mono); font-size:10px; letter-spacing:.12em; color:var(--text-dim); text-transform:uppercase; }
+#coverViewerCount{ margin-top:8px; font-size:9px; letter-spacing:.14em; color:var(--text-faint); }
+#coverViewerClose{ position:absolute; top:24px; right:28px; width:48px; height:48px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.2); border-radius:50%; background:rgba(8,8,10,.5); color:var(--text); font-size:20px; cursor:pointer; z-index:10; transition:background .25s ease,border-color .25s ease,color .25s ease,transform .25s ease; }
+#coverViewerClose:hover{ background:var(--accent); border-color:var(--accent); color:#08080a; transform:rotate(90deg); }
+.cover-nav{ position:absolute; top:50%; transform:translateY(-50%); z-index:10; width:56px; height:56px; border:1px solid rgba(255,255,255,.2); border-radius:50%; background:rgba(8,8,10,.5); color:var(--text); font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .25s ease,border-color .25s ease,color .25s ease,transform .25s ease; }
+.cover-nav:hover{ background:var(--accent); border-color:var(--accent); color:#08080a; }
+.cover-prev{ left:28px; } .cover-next{ right:28px; }
+@media(max-width:760px){
+  #coverViewer{ padding:20px; }
+  #coverViewerImage{ max-width:92vw; max-height:74vh; }
+  #coverViewerClose{ top:16px; right:16px; }
+  .cover-nav{ width:46px; height:46px; font-size:18px; background:rgba(8,8,10,.7); }
+  .cover-prev{ left:12px; } .cover-next{ right:12px; }
+  #coverViewerTitle{ font-size:18px; }
+}
+
+/* ============================= DETAIL NEXT / PREVIOUS ============================= */
+.detail-nav{ position:fixed; top:50%; transform:translateY(-50%); z-index:2025; width:54px; height:54px; border:1px solid rgba(255,255,255,.2); border-radius:50%; background:rgba(8,8,10,.5); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); color:var(--text); font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background .25s ease,border-color .25s ease,color .25s ease,transform .25s ease; }
+.detail-nav:hover{ background:var(--accent); border-color:var(--accent); color:#08080a; }
+.detail-prev{ left:24px; } .detail-next{ right:24px; }
+@media(max-width:760px){ .detail-nav{ width:44px; height:44px; font-size:18px; } .detail-prev{ left:10px; } .detail-next{ right:10px; } }
+
+/* ============================= WORK VIEWER LABEL ============================= */
+.detail-work-meta{position:absolute;left:50%;top:calc(50% + min(24vw,270px));transform:translateX(-50%);text-align:center;z-index:25;pointer-events:none;min-width:220px;}
+.detail-work-meta .work-title{font-family:var(--f-head);font-size:22px;font-weight:600;line-height:1.05;letter-spacing:.01em;color:var(--text);}
+.detail-work-meta .work-type{margin-top:7px;font-size:10px;letter-spacing:.14em;color:var(--text-dim);}
+.detail-work-meta .work-count{margin-top:8px;font-size:9px;letter-spacing:.14em;color:var(--text-faint);}
+@media(max-width:760px){.detail-work-meta{top:calc(50% + 34vw);min-width:180px;}.detail-work-meta .work-title{font-size:18px;}.detail-work-meta .work-type{font-size:9px;}.detail-work-meta .work-count{font-size:8px;}}
+
+
 /* ============================= PROJECT DETAIL OVERLAY ============================= */
 #detail{
   position:fixed; inset:0; z-index:2000; background:var(--bg); transform:translateY(100%);
@@ -1447,6 +1638,98 @@ html {
   -webkit-backdrop-filter:blur(12px);
 }
 
+
+/* ============================================================
+   FIX — KEEP WORK TITLE / TYPE / SERIAL BELOW THE VIDEO
+   ============================================================ */
+
+#detail{
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:78px 20px 28px !important;
+}
+
+#detail .d-frame{
+  position:relative !important;
+  left:auto !important;
+  top:auto !important;
+  transform:none !important;
+  flex:0 0 auto !important;
+  width:min(78vw,1100px) !important;
+  max-height:72vh !important;
+  aspect-ratio:16/9 !important;
+  margin:0 !important;
+}
+
+#detail .detail-work-meta{
+  position:relative !important;
+  left:auto !important;
+  top:auto !important;
+  transform:none !important;
+  width:100% !important;
+  min-width:0 !important;
+  flex:0 0 auto !important;
+  margin-top:16px !important;
+  text-align:center !important;
+  pointer-events:none !important;
+  z-index:25 !important;
+}
+
+#detail .detail-work-meta .work-title{
+  font-family:var(--f-head) !important;
+  font-size:22px !important;
+  font-weight:600 !important;
+  line-height:1.05 !important;
+  color:var(--text) !important;
+}
+
+#detail .detail-work-meta .work-type{
+  margin-top:7px !important;
+  font-family:var(--f-mono) !important;
+  font-size:10px !important;
+  letter-spacing:.14em !important;
+  color:var(--text-dim) !important;
+}
+
+#detail .detail-work-meta .work-count{
+  margin-top:8px !important;
+  font-family:var(--f-mono) !important;
+  font-size:9px !important;
+  letter-spacing:.14em !important;
+  color:var(--text-faint) !important;
+}
+
+@media(max-width:760px){
+  #detail{
+    padding:68px 16px 22px !important;
+  }
+
+  #detail .d-frame{
+    width:100% !important;
+    max-height:70vh !important;
+  }
+
+  #detail .detail-work-meta{
+    margin-top:14px !important;
+  }
+
+  #detail .detail-work-meta .work-title{
+    font-size:18px !important;
+  }
+
+  #detail .detail-work-meta .work-type{
+    font-size:9px !important;
+  }
+
+  #detail .detail-work-meta .work-count{
+    font-size:8px !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1466,6 +1749,7 @@ html {
   <div class="logo">VISION<b>X</b>VISUALSS</div>
   <nav>
     <a href="#work">WORK</a>
+    <a href="#covers">COVERS</a>
     <a href="#about">ABOUT</a>
     <a href="#services">SERVICES</a>
     <a href="#contact">CONTACT</a>
@@ -1531,7 +1815,7 @@ html {
   <div class="layer after" id="baAfter">
     <video
       class="process-video"
-      src="assets/videos/v5.mp4"
+      src="assets/videos/v1.mp4"
       autoplay
       muted
       loop
@@ -1590,6 +1874,17 @@ html {
       <div class="head-sub fx-up">A SELECTION OF PROJECTS, CAMPAIGNS &amp; VISUAL STORIES</div>
     </div>
     <div class="work-grid" id="workGrid"></div>
+  </div>
+</section>
+
+<!-- ============================= THUMBNAILS / COVERS ============================= -->
+<section id="covers" class="section-pad">
+  <div class="wrap">
+    <div class="head-row">
+      <div class="head-title fx-up">THUMBNAILS<br>/ COVERS</div>
+      <div class="head-sub fx-up">Selected thumbnail designs, cover art and visual concepts created for digital content.</div>
+    </div>
+    <div class="covers-grid" id="coversGrid"></div>
   </div>
 </section>
 
@@ -1673,11 +1968,27 @@ html {
   </div>
 </section>
 
+<!-- ============================= COVER VIEWER ============================= -->
+<div id="coverViewer">
+  <button id="coverPrev" class="cover-nav cover-prev" type="button" aria-label="Previous cover">←</button>
+  <div class="cover-viewer-inner">
+    <img id="coverViewerImage" src="" alt="">
+    <div id="coverViewerTitle"></div>
+    <div id="coverViewerType"></div>
+    <div id="coverViewerCount" class="mono"></div>
+  </div>
+  <button id="coverNext" class="cover-nav cover-next" type="button" aria-label="Next cover">→</button>
+  <button id="coverViewerClose" type="button" aria-label="Close cover viewer">✕</button>
+</div>
+
 <!-- ============================= PROJECT DETAIL OVERLAY ============================= -->
 <div id="detail">
   <div class="d-top">
     <button class="d-close" id="dClose" data-cursor="close">← BACK TO WORK</button>
   </div>
+
+  <button class="detail-nav detail-prev" id="detailPrev" type="button" aria-label="Previous work">←</button>
+  <button class="detail-nav detail-next" id="detailNext" type="button" aria-label="Next work">→</button>
 
   <div class="d-frame" id="dVideoFrame">
     <video
@@ -1742,6 +2053,11 @@ html {
       </div>
     </div>
   </div>
+
+  <div class="detail-work-meta" aria-live="polite">
+    <div id="detailWorkTitle" class="work-title">WORK 01</div>
+    <div id="detailWorkCount" class="work-count mono">01 / 05</div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1756,10 +2072,44 @@ const PHENIX_DATA = {
   brand: { name: "VISIONXVISUALSS", person: "Lokesh", roles: ["Video Editor","Visual Storyteller"] },
 
   services: [
-    { title:"VIDEO EDITING", items:["Commercials","YouTube","Short-form","Social Media","Music Videos"] },
-    { title:"VISUAL EFFECTS", items:["Compositing","VFX","Visual Enhancements"] },
-    { title:"POST PRODUCTION", items:["Sound Design","Storytelling","Pacing"] }
-  ],
+  {
+    title:"VIDEO EDITING",
+    items:[
+      "Commercials",
+      "YouTube",
+      "Short-form",
+      "Social Media",
+      "Music Videos"
+    ]
+  },
+
+  {
+    title:"VISUAL EFFECTS",
+    items:[
+      "Compositing",
+      "VFX",
+      "Visual Enhancements"
+    ]
+  },
+
+  {
+    title:"POST PRODUCTION",
+    items:[
+      "Sound Design",
+      "Storytelling",
+      "Pacing"
+    ]
+  },
+
+  {
+    title:"THUMBNAILS & COVERS",
+    items:[
+      "YouTube Thumbnails",
+      "Cover Art",
+      "Social Media Covers",
+    ]
+  }
+],
 
 projects: [
   {
@@ -1819,26 +2169,35 @@ projects: [
   }
 ],
 
+  covers: [
+    { title:"COVER 01", type:"THUMBNAIL DESIGN", image:"assets/images/covers/cover1.jpg" },
+    { title:"COVER 02", type:"YOUTUBE THUMBNAIL", image:"assets/images/covers/cover2.jpg" },
+    { title:"COVER 03", type:"COVER ART", image:"assets/images/covers/cover3.jpg" },
+    { title:"COVER 04", type:"THUMBNAIL DESIGN", image:"assets/images/covers/cover4.jpg" },
+    { title:"COVER 05", type:"COVER ART", image:"assets/images/covers/cover5.jpg" },
+    { title:"COVER 06", type:"VISUAL CONCEPT", image:"assets/images/covers/cover6.jpg" }
+  ],
+
   process: ["RAW FOOTAGE","ROUGH CUT","VFX","SOUND DESIGN","FINAL"],
 
   more: [
   {
-    title:"Reel Fragment 01",
+    title:"More 01",
     client:"Brand / Client",
     video:"assets/videos/rv1.mp4"
   },
   {
-    title:"Reel Fragment 02",
+    title:"More 02",
     client:"Brand / Client",
     video:"assets/videos/rv2.mp4"
   },
   {
-    title:"Reel Fragment 03",
+    title:"More 03",
     client:"Brand / Client",
     video:"assets/videos/rv3.mp4"
   },
   {
-    title:"Reel Fragment 04",
+    title:"More 04",
     client:"Brand / Client",
     video:"assets/videos/rv5.mp4"
   },
@@ -2100,6 +2459,80 @@ function initHeroReveal(){
 })();
 
 /* =====================================================================
+   THUMBNAILS / COVERS
+   ===================================================================== */
+(function covers(){
+  const grid = $('#coversGrid');
+  if(!grid || !PHENIX_DATA.covers) return;
+
+  grid.innerHTML = PHENIX_DATA.covers.map((cover,i)=>`
+    <article class="cover-card" data-cover-index="${i}" data-cursor="view" data-label="VIEW COVER →">
+      <img src="${cover.image}" alt="${cover.title} — ${cover.type}" loading="lazy">
+      <div class="cover-number mono">0${i+1}</div>
+      <div class="cover-info">
+        <h3>${cover.title}</h3>
+        <div class="cover-view">VIEW COVER →</div>
+      </div>
+    </article>
+  `).join('');
+
+  const viewer = $('#coverViewer');
+  const image = $('#coverViewerImage');
+  const title = $('#coverViewerTitle');
+  const type = $('#coverViewerType');
+  const count = $('#coverViewerCount');
+  let coverIdx = 0;
+
+  function renderCover(index){
+    const total = PHENIX_DATA.covers.length;
+    coverIdx = (index + total) % total;
+    const cover = PHENIX_DATA.covers[coverIdx];
+    image.src = cover.image;
+    image.alt = `${cover.title} — ${cover.type}`;
+    title.textContent = cover.title;
+    count.textContent = `${String(coverIdx+1).padStart(2,'0')} / ${String(total).padStart(2,'0')}`;
+  }
+
+  function openCover(index){
+    renderCover(index);
+    viewer.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+
+  function closeCover(){
+    viewer.classList.remove('open');
+    document.body.style.overflow='';
+    setTimeout(()=>{ if(!viewer.classList.contains('open')) image.src=''; },350);
+  }
+
+  function nextCover(){ renderCover(coverIdx+1); }
+  function prevCover(){ renderCover(coverIdx-1); }
+
+  $$('.cover-card').forEach(card=>{
+    card.addEventListener('click',()=>openCover(Number(card.dataset.coverIndex)));
+  });
+  $('#coverNext').addEventListener('click',e=>{ e.stopPropagation(); nextCover(); });
+  $('#coverPrev').addEventListener('click',e=>{ e.stopPropagation(); prevCover(); });
+  $('#coverViewerClose').addEventListener('click',closeCover);
+  viewer.addEventListener('click',e=>{ if(e.target===viewer) closeCover(); });
+
+  let touchStartX=0;
+  viewer.addEventListener('touchstart',e=>{ touchStartX=e.changedTouches[0].clientX; },{passive:true});
+  viewer.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-touchStartX;
+    if(Math.abs(dx)<45) return;
+    dx<0 ? nextCover() : prevCover();
+  },{passive:true});
+
+  document.addEventListener('keydown',e=>{
+    if(!viewer.classList.contains('open')) return;
+    if(e.key==='Escape') closeCover();
+    if(e.key==='ArrowRight') nextCover();
+    if(e.key==='ArrowLeft') prevCover();
+  });
+})();;
+
+/* =====================================================================
    SERVICES
    ===================================================================== */
 (function services(){
@@ -2260,6 +2693,8 @@ function initHeroReveal(){
 
       if(!item) return;
 
+      currentDetailType = 'more';
+      currentDetailIdx = index;
       loadMoreVideo(item);
 
       $('#detail').classList.add('open');
@@ -2297,6 +2732,8 @@ function initHeroReveal(){
    PROJECT DETAIL OVERLAY + VIDEO PLAYER
    ===================================================================== */
 let currentIdx = 0;
+let currentDetailType = 'project';
+let currentDetailIdx = 0;
 
 function formatVideoTime(seconds){
   if(!Number.isFinite(seconds)) return '00:00';
@@ -2456,11 +2893,57 @@ function openDetail(id){
   const idx = projects.findIndex(p => p.id === id);
 
   currentIdx = idx < 0 ? 0 : idx;
+  currentDetailType = 'project';
+  currentDetailIdx = currentIdx;
 
   renderDetail(true);
 
   $('#detail').classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+function updateDetailWorkCount(){
+  const titleEl = $('#detailWorkTitle');
+  const typeEl = $('#detailWorkType');
+  const countEl = $('#detailWorkCount');
+  if(!countEl) return;
+
+  const isMore = currentDetailType === 'more';
+  const items = isMore ? PHENIX_DATA.more : PHENIX_DATA.projects;
+  const total = items.length || 0;
+  const current = total ? currentDetailIdx + 1 : 0;
+  const item = items[currentDetailIdx];
+
+  if(isMore){
+    if(titleEl) titleEl.textContent = item ? item.title : 'WORK';
+    if(typeEl) typeEl.textContent = item ? (item.client || 'MORE WORK') : 'MORE WORK';
+  }else{
+    if(titleEl) titleEl.textContent = item ? item.title : `WORK ${String(current).padStart(2,'0')}`;
+    if(typeEl) typeEl.textContent = item ? (item.category || item.role || 'VIDEO EDITING') : 'VIDEO EDITING';
+  }
+
+  countEl.textContent = `${String(current).padStart(2,'0')} / ${String(total).padStart(2,'0')}`;
+}
+
+function renderCurrentDetail(autoplay=true){
+  updateDetailWorkCount();
+  if(currentDetailType==='more'){
+    const items=PHENIX_DATA.more;
+    const item=items[currentDetailIdx];
+    if(item) loadMoreVideo(item);
+  }else{
+    const items=PHENIX_DATA.projects;
+    const project=items[currentDetailIdx];
+    if(project) loadProjectVideo(project,autoplay);
+  }
+}
+
+function moveDetail(delta){
+  const items = currentDetailType==='more' ? PHENIX_DATA.more : PHENIX_DATA.projects;
+  if(!items.length) return;
+  currentDetailIdx = (currentDetailIdx + delta + items.length) % items.length;
+  if(currentDetailType==='project') currentIdx=currentDetailIdx;
+  renderCurrentDetail(true);
 }
 
 function closeDetail(){
@@ -2477,13 +2960,67 @@ function closeDetail(){
 
 function renderDetail(autoplay=false){
 
-  const p = PHENIX_DATA.projects[currentIdx];
+  updateDetailWorkCount();
+
+  const p = PHENIX_DATA.projects[currentDetailIdx];
+  currentIdx = currentDetailIdx;
 
   // Project player intentionally contains only the video.
   loadProjectVideo(p, autoplay);
 
   $('#detail').scrollTo(0,0);
 }
+
+/* ============================================================
+   DETAIL NEXT / PREVIOUS NAVIGATION
+   ============================================================ */
+(function detailNavigation(){
+  const prev=$('#detailPrev');
+  const next=$('#detailNext');
+  if(!prev || !next) return;
+
+  prev.addEventListener('click',()=>moveDetail(-1));
+  next.addEventListener('click',()=>moveDetail(1));
+
+  let touchStartX=0;
+  const detail=$('#detail');
+  detail.addEventListener('touchstart',e=>{ touchStartX=e.changedTouches[0].clientX; },{passive:true});
+  detail.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-touchStartX;
+    if(Math.abs(dx)<60) return;
+    dx<0 ? moveDetail(1) : moveDetail(-1);
+  },{passive:true});
+
+  document.addEventListener('keydown',e=>{
+    if(!detail.classList.contains('open')) return;
+    const tag=document.activeElement?.tagName;
+    if(tag==='INPUT' || tag==='BUTTON') return;
+    if(e.key==='ArrowLeft') moveDetail(-1);
+    if(e.key==='ArrowRight') moveDetail(1);
+  });
+})();
+
+
+/* ============================================================
+   CLOSE PROJECT VIEWER WHEN CLICKING OUTSIDE THE VIDEO
+   ============================================================ */
+(function detailBackdropClose(){
+  const detail = $('#detail');
+  const frame = $('#dVideoFrame');
+
+  if(!detail || !frame) return;
+
+  detail.addEventListener('click', e => {
+    /*
+      Only close when the actual overlay background is clicked.
+      Clicking the video, controls, title/meta, arrows, or BACK TO WORK
+      will not trigger this.
+    */
+    if(e.target === detail){
+      closeDetail();
+    }
+  });
+})();
 
 /* ============================================================
    PROJECT VIDEO PLAYER CONTROLS
@@ -2622,18 +3159,10 @@ function renderDetail(autoplay=false){
         break;
 
       case 'arrowleft':
-        e.preventDefault();
-        video.currentTime =
-          Math.max(0, video.currentTime - 5);
-        break;
-
       case 'arrowright':
+        /* Left / Right now switch to previous / next work. */
         e.preventDefault();
-        video.currentTime =
-          Math.min(
-            video.duration || Infinity,
-            video.currentTime + 5
-          );
+        moveDetail(e.key.toLowerCase()==='arrowleft' ? -1 : 1);
         break;
 
       case 'm':
@@ -2685,6 +3214,10 @@ $('#dClose').addEventListener('click', closeDetail);
   gsap.utils.toArray('.project-card').forEach((el,i)=>{
     gsap.from(el, { opacity:0, y:60, duration:1, ease:'power3.out', delay:i*.03,
       scrollTrigger:{ trigger:el, start:'top 90%' } });
+  });
+  gsap.utils.toArray('.cover-card').forEach((el,i)=>{
+    gsap.from(el, { opacity:0, y:45, duration:.9, ease:'power3.out', delay:i*.04,
+      scrollTrigger:{ trigger:el, start:'top 92%' } });
   });
   gsap.utils.toArray('.service-row').forEach(el=>{
     gsap.from(el, { opacity:0, y:30, duration:.8, ease:'power2.out',

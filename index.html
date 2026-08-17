@@ -754,7 +754,7 @@ section{ position:relative; }
 
 #servicesList{
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
+  grid-template-columns:repeat(12, 1fr);
   gap:24px;
 }
 
@@ -771,8 +771,15 @@ section{ position:relative; }
   background:var(--bg-soft);
   transition:
     border-color .4s var(--ease),
-    background .4s var(--ease);
+    background .4s var(--ease),
+    transform .4s var(--ease);
 }
+
+/* Deliberate editorial 2×2 composition instead of leaving one card alone. */
+.service-row:nth-child(1){ grid-column:span 7; }
+.service-row:nth-child(2){ grid-column:span 5; }
+.service-row:nth-child(3){ grid-column:span 5; }
+.service-row:nth-child(4){ grid-column:span 7; }
 
 .service-row:hover{
   border-color:var(--line-strong);
@@ -824,6 +831,12 @@ section{ position:relative; }
 @media(max-width:1000px){
   #servicesList{
     grid-template-columns:repeat(2,1fr);
+    gap:18px;
+  }
+
+  .service-row,
+  .service-row:nth-child(n){
+    grid-column:span 1;
   }
 }
 
@@ -831,6 +844,11 @@ section{ position:relative; }
   #servicesList{
     grid-template-columns:1fr;
     gap:16px;
+  }
+
+  .service-row,
+  .service-row:nth-child(n){
+    grid-column:span 1;
   }
 
   .service-row{

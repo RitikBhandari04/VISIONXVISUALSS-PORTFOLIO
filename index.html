@@ -766,7 +766,7 @@ section{ position:relative; }
   border:1px solid var(--line);
   border-radius:4px;
   position:relative;
-  cursor:none;
+  cursor:pointer;
   overflow:hidden;
   background:var(--bg-soft);
   transition:
@@ -777,6 +777,12 @@ section{ position:relative; }
 .service-row:hover{
   border-color:var(--line-strong);
   background:var(--surface);
+  transform:translateY(-3px);
+}
+
+.service-row:focus-visible{
+  outline:1px solid var(--accent);
+  outline-offset:4px;
 }
 
 .service-row .idx{
@@ -2537,16 +2543,55 @@ function initHeroReveal(){
    ===================================================================== */
 (function services(){
   const list = $('#servicesList');
+
   list.innerHTML = PHENIX_DATA.services.map((s,i)=>`
-    <div class="service-row"  data-label="EXPLORE">
+    <div class="service-row" data-label="EXPLORE" role="button" tabindex="0">
       <div class="idx mono">0${i+1}</div>
       <div>
         <h3>${s.title}</h3>
         <div class="items">${s.items.map(it=>`<span>${it}</span>`).join('')}</div>
       </div>
-      
     </div>
   `).join('');
+
+  function goToSection(id){
+    const target = document.getElementById(id);
+    if(!target) return;
+
+    target.scrollIntoView({
+      behavior:'smooth',
+      block:'start'
+    });
+  }
+
+  $$('.service-row', list).forEach(card=>{
+    const title = card.querySelector('h3')?.textContent.trim().toUpperCase();
+
+    let targetId = null;
+
+    if(title === 'VIDEO EDITING' || title === 'POST PRODUCTION'){
+      targetId = 'work';
+    }else if(title === 'VISUAL EFFECTS'){
+      targetId = 'process';
+    }else if(title === 'THUMBNAILS & COVERS'){
+      targetId = 'covers';
+    }
+
+    if(!targetId) return;
+
+    const navigate = ()=>{
+      goToSection(targetId);
+    };
+
+    card.addEventListener('click', navigate);
+
+    card.addEventListener('keydown', e=>{
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        navigate();
+      }
+    });
+  });
 })();
 
 /* =====================================================================

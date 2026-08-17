@@ -568,37 +568,135 @@ section{ position:relative; }
   object-fit:cover;
   transition:transform 1.2s var(--ease);
 }
-.work-grid{ display:grid; grid-template-columns:repeat(12,1fr); gap:24px; }
+
+.work-grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  gap:24px;
+}
+
 .project-card{
-  position:relative; border-radius:4px; overflow:hidden; cursor:none;
+  position:relative;
+  border-radius:4px;
+  overflow:hidden;
+  cursor:none;
   grid-column:span 12;
 }
-.project-card.p-lg{ grid-column:span 8; }
-.project-card.p-sm{ grid-column:span 4; }
+
+/* Earlier layout restored:
+   01 = wide / 02 = narrow
+   03 = narrow / 04 = wide
+   05 = full width
+   06 = wide / 07 = narrow
+*/
 @media (min-width:761px){
   .project-card:nth-child(1){ grid-column:span 7; }
   .project-card:nth-child(2){ grid-column:span 5; }
   .project-card:nth-child(3){ grid-column:span 5; }
   .project-card:nth-child(4){ grid-column:span 7; }
   .project-card:nth-child(5){ grid-column:span 12; }
+  .project-card:nth-child(6){ grid-column:span 7; }
+  .project-card:nth-child(7){ grid-column:span 5; }
 }
+
 .project-card .frame{
-  position:relative; aspect-ratio:4/3; overflow:hidden; background:#111;
+  position:relative;
+  aspect-ratio:4/3;
+  overflow:hidden;
+  background:#111;
 }
-.project-card:nth-child(5) .frame{ aspect-ratio:21/9; }
-.project-card .footage{ position:absolute; inset:0; transition:transform 1.2s var(--ease); }
-.project-card:hover .footage{ transform:scale(1.08); }
-.project-card .scrim{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.75) 100%); opacity:.75; transition:opacity .4s; }
-.project-card:hover .scrim{ opacity:.9; }
-.project-card .pc-top{ position:absolute; top:20px; left:20px; right:20px; display:flex; justify-content:space-between; font-family:var(--f-mono); font-size:11px; letter-spacing:.1em; color:var(--text-dim); }
-.project-card .pc-bottom{ position:absolute; left:20px; right:20px; bottom:20px; }
-.project-card h3{ font-family:var(--f-head); font-weight:600; font-size:clamp(20px,2.6vw,32px); line-height:1.05; }
-.project-card .client{ font-family:var(--f-mono); font-size:11px; letter-spacing:.1em; color:var(--text-dim); margin-top:6px; }
+
+.project-card:nth-child(5) .frame{
+  aspect-ratio:21/9;
+}
+
+.project-card .footage{
+  position:absolute;
+  inset:0;
+  transition:transform 1.2s var(--ease);
+}
+
+.project-card:hover .footage{
+  transform:scale(1.08);
+}
+
+.project-card .scrim{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    180deg,
+    rgba(0,0,0,0) 35%,
+    rgba(0,0,0,.75) 100%
+  );
+  opacity:.75;
+  transition:opacity .4s;
+}
+
+.project-card:hover .scrim{
+  opacity:.9;
+}
+
+.project-card .pc-top{
+  position:absolute;
+  top:20px;
+  left:20px;
+  right:20px;
+  display:flex;
+  justify-content:space-between;
+  font-family:var(--f-mono);
+  font-size:11px;
+  letter-spacing:.1em;
+  color:var(--text-dim);
+}
+
+.project-card .pc-bottom{
+  position:absolute;
+  left:20px;
+  right:20px;
+  bottom:20px;
+}
+
+.project-card h3{
+  font-family:var(--f-head);
+  font-weight:600;
+  font-size:clamp(20px,2.6vw,32px);
+  line-height:1.05;
+}
+
 .project-card .view-link{
-  display:inline-flex; align-items:center; gap:6px; margin-top:14px; font-family:var(--f-mono); font-size:11px;
-  letter-spacing:.12em; opacity:0; transform:translateY(6px); transition:all .4s var(--ease);
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:14px;
+  font-family:var(--f-mono);
+  font-size:11px;
+  letter-spacing:.12em;
+  opacity:0;
+  transform:translateY(6px);
+  transition:all .4s var(--ease);
 }
-.project-card:hover .view-link{ opacity:1; transform:translateY(0); }
+
+.project-card:hover .view-link{
+  opacity:1;
+  transform:translateY(0);
+}
+
+@media(max-width:760px){
+  .work-grid{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  .project-card,
+  .project-card:nth-child(n){
+    grid-column:1 / -1;
+  }
+
+  .project-card .frame,
+  .project-card:nth-child(5) .frame{
+    aspect-ratio:16/10;
+  }
+}
 
 /* ============================= THUMBNAILS / COVERS ============================= */
 #covers{
@@ -1844,7 +1942,7 @@ html {
   <div class="layer before">
     <video
       class="process-video"
-      src="assets/videos/v1.mp4"
+      src="assets/videos/after.mp4"
       autoplay
       muted
       loop
@@ -1857,7 +1955,7 @@ html {
   <div class="layer after" id="baAfter">
     <video
       class="process-video"
-      src="assets/videos/v1.mp4"
+      src="assets/videos/before.mp4"
       autoplay
       muted
       loop
@@ -1866,8 +1964,8 @@ html {
     </video>
   </div>
 
-  <div class="lbl l mono">RAW FOOTAGE</div>
-  <div class="lbl r mono">FINAL EDIT</div>
+  <div class="lbl l mono">FINAL EDIT</div>
+  <div class="lbl r mono">RAW FOOTAGE</div>
 
   <div class="handle" id="baHandle"></div>
 
@@ -1892,7 +1990,7 @@ html {
   
   <video
     class="showreel-video"
-    src="assets/videos/v5.mp4"
+    src="assets/videos/v1.mp4"
     autoplay
     muted
     loop
@@ -1991,7 +2089,7 @@ html {
 <section id="more" class="section-pad">
   <div class="wrap">
     <div class="head-row">
-      <div class="head-title fx-up">MORE WORK →</div>
+      <div class="head-title fx-up">REELS →</div>
     </div>
   </div>
   <div class="wrap"><div class="hscroll" id="hscroll"></div></div>
@@ -2097,7 +2195,7 @@ html {
   </div>
 
   <div class="detail-work-meta" aria-live="polite">
-    <div id="detailWorkTitle" class="work-title">WORK 01</div>
+    <div id="detailWorkTitle" class="work-title">REEL 01</div>
     <div id="detailWorkCount" class="work-count mono">01 / 05</div>
   </div>
 </div>
@@ -2158,8 +2256,6 @@ projects: [
     id:"p01",
     title:"PROJECT 01",
     year:"2026",
-    category:"Commercial Edit",
-    role:"Video Editor",
     desc:"A fast-paced commercial cut built around rhythm and product hero moments, edited to land every beat with the soundtrack.",
     grad:"linear-gradient(135deg,#241a15,#0a0a0b 60%,#2a140a)",
     video:"assets/videos/v1.mp4"
@@ -2169,8 +2265,6 @@ projects: [
     id:"p02",
     title:"PROJECT 02",
     year:"2025",
-    category:"Social Campaign",
-    role:"Editor / Motion Designer",
     desc:"A vertical-first social campaign designed for retention in the first three seconds, with kinetic type carrying the message.",
     grad:"linear-gradient(135deg,#1a1c24,#0a0a0b 60%,#0a1420)",
     video:"assets/videos/v2.mp4"
@@ -2180,8 +2274,6 @@ projects: [
     id:"p03",
     title:"PROJECT 03",
     year:"2025",
-    category:"Music Video",
-    role:"Video Editor",
     desc:"A narrative music video cut on-tempo, blending performance footage with abstract visual sequences.",
     grad:"linear-gradient(135deg,#241a24,#0a0a0b 60%,#200a20)",
     video:"assets/videos/v3.mp4"
@@ -2191,8 +2283,6 @@ projects: [
     id:"p04",
     title:"PROJECT 04",
     year:"2024",
-    category:"Motion Design",
-    role:"Motion Designer",
     desc:"A system of animated brand assets and title sequences built for repeat use across a content calendar.",
     grad:"linear-gradient(135deg,#2a1408,#0a0a0b 60%,#1a0800)",
     video:"assets/videos/v4.mp4"
@@ -2201,13 +2291,28 @@ projects: [
   {
     id:"p05",
     title:"PROJECT 05",
-    client:"Brand / Client",
     year:"2024",
-    category:"VFX / Commercial",
-    role:"VFX / Compositor",
     desc:"A commercial spot with heavy compositing work — screen replacements, particle simulation and colour finishing.",
     grad:"linear-gradient(135deg,#141820,#0a0a0b 60%,#080d14)",
     video:"assets/videos/v5.mp4"
+  },
+
+  {
+    id:"p06",
+    title:"PROJECT 06",
+    year:"2024",
+    desc:"A cinematic visual edit combining dynamic pacing, transitions and carefully timed visual moments.",
+    grad:"linear-gradient(135deg,#18151f,#0a0a0b 60%,#100820)",
+    video:"assets/videos/v7.mp4"
+  },
+
+  {
+    id:"p07",
+    title:"PROJECT 07",
+    year:"2023",
+    desc:"A visually driven edit focused on atmosphere, storytelling and seamless transitions between scenes.",
+    grad:"linear-gradient(135deg,#171d18,#0a0a0b 60%,#08140c)",
+    video:"assets/videos/v6.mp4"
   }
 ],
 
@@ -2222,29 +2327,44 @@ projects: [
 
   process: ["RAW FOOTAGE","ROUGH CUT","VFX","SOUND DESIGN","FINAL"],
 
-  more: [
+more: [
   {
-    title:"More 01",
-    client:"Brand / Client",
+    title:"REEL 01",
     video:"assets/videos/rv1.mp4"
   },
   {
-    title:"More 02",
-    client:"Brand / Client",
+    title:"REEL 02",
     video:"assets/videos/rv2.mp4"
   },
   {
-    title:"More 03",
-    client:"Brand / Client",
-    video:"assets/videos/rv3.mp4"
-  },
-  {
-    title:"More 04",
-    client:"Brand / Client",
+    title:"REEL 03",
     video:"assets/videos/rv5.mp4"
   },
+  {
+    title:"REEL 04",
+    video:"assets/videos/rv6.mp4"
+  },
+  {
+    title:"REEL 05",
+    video:"assets/videos/rv7.mp4"
+  },
+  {
+    title:"REEL 06",
+    video:"assets/videos/rv8.mp4"
+  },
+  {
+    title:"REEL 07",
+    video:"assets/videos/rv9.mp4"
+  },
+  {
+    title:"REEL 08",
+    video:"assets/videos/rv10.mp4"
+  },
+  {
+    title:"REEL 09",
+    video:"assets/videos/rv11.mp4"
+  }
 ],
-
   detailTabs: ["Final Edit","Behind The Scenes","Motion Graphics","VFX","Color Grading","Before / After"]
 };
 
@@ -2977,7 +3097,7 @@ function loadShowreelVideo(autoplay=true){
   video.removeAttribute('src');
   video.load();
 
-  const showreelSrc = 'assets/videos/v5.mp4';
+  const showreelSrc = 'assets/videos/v1.mp4';
 
   video.src = showreelSrc;
   syncDetailVideoBackground(showreelSrc);
@@ -3343,13 +3463,22 @@ $('#dClose').addEventListener('click', closeDetail);
   const btn = $('#watchShowreelBtn');
   const frame = $('#showreelFrame');
 
+  /*
+    WATCH SHOWREEL button:
+    Keep the original #showreel anchor behavior so it only
+    navigates/scrolls to the Showreel section.
+  */
   if(btn){
-    btn.addEventListener('click', e=>{
-      e.preventDefault();
-      openShowreel();
+    btn.addEventListener('click', ()=>{
+      // Do not open the video viewer from this button.
+      // The href="#showreel" handles the navigation.
     });
   }
 
+  /*
+    Clicking the actual Showreel preview still opens the
+    full-screen video viewer.
+  */
   if(frame){
     frame.addEventListener('click', e=>{
       e.preventDefault();

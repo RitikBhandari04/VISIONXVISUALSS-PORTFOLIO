@@ -2600,24 +2600,60 @@ gsap.registerPlugin(ScrollTrigger);
    LOADER
    ===================================================================== */
 (function loader(){
+
   const pctText = $('#pctText');
   const barFill = $('#barFill');
+
   let pct = 0;
-  const timer = setInterval(()=>{
-    pct += Math.random()*18;
-    if(pct >= 100){ pct = 100; clearInterval(timer); finish(); }
-    pctText.textContent = 'LOADING ' + String(Math.floor(pct)).padStart(3,'0') + '%';
-    barFill.style.width = pct + '%';
-  }, 160);
+
+  function updateLoader(value){
+    const number = Math.min(100, Math.floor(value));
+
+    pctText.textContent = 'LOADING ' + number + '%';
+    barFill.style.width = number + '%';
+  }
+
+  const timer = setInterval(() => {
+
+    pct += 1;
+
+    updateLoader(pct);
+
+    if(pct >= 100){
+      clearInterval(timer);
+
+      updateLoader(100);
+
+      setTimeout(finish, 200);
+    }
+
+  }, 25);
+
 
   function finish(){
-    gsap.timeline({ onComplete: revealSite })
-      .to('#loaderTitle', { yPercent:-110, duration:.7, ease:'power4.inOut', delay:.25 })
-      .to('.bar-track, .pct', { opacity:0, duration:.3 }, '<')
-      .to('#loader', { yPercent:-100, duration:.9, ease:'power4.inOut' }, '-=.25');
-  }
-})();
 
+    gsap.timeline({
+      onComplete: revealSite
+    })
+    .to('#loaderTitle', {
+      yPercent:-110,
+      duration:.7,
+      ease:'power4.inOut',
+      delay:.25
+    })
+    .to('.bar-track, .pct', {
+      opacity:0,
+      duration:.3
+    }, '<')
+    .to('#loader', {
+      yPercent:-100,
+      duration:.9,
+      ease:'power4.inOut'
+    }, '-=.25');
+
+  }
+
+})();
 function revealSite(){
   $('#loader').style.display='none';
   document.body.style.overflow='';
